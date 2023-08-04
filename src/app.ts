@@ -6,9 +6,10 @@ export async function getInitialState(): Promise<{ name: string }> {
   return { name: '@umijs/max' };
 }
 
+console.log(' layout ');
 export const layout = () => {
   return {
-    logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
+    // logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
     menu: {
       locale: false,
     },

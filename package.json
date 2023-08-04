@@ -19,7 +19,8 @@
     "@rjsf/validator-ajv8": "^5.11.2",
     "@umijs/max": "^4.0.74",
     "antd": "^5.4.0",
-    "cesium": "^1.108.0"
+    "cesium": "^1.108.0",
+    "copy-webpack-plugin": "^11.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",

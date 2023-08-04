@@ -1,15 +1,21 @@
+import path from 'path'
 import { defineConfig } from '@umijs/max';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+const cesiumSource = path.resolve('./node_modules/cesium/Build/Cesium/')
 
 export default defineConfig({
   antd: {},
   access: {},
+  hash: true,
   model: {},
   initialState: {},
   request: {},
   layout: {
     title: 'czml-editor',
   },
-  
+  define: {
+    CESIUM_BASE_URL: './library',
+  },
   routes: [
     {
       path: '/',
@@ -20,18 +26,40 @@ export default defineConfig({
       title: 'CZML-editor',
       path: '/home',
       component: './Home',
-    },
-    {
-      name: '权限演示',
-      path: '/access',
-      component: './Access',
-    },
-    {
-      name: ' CRUD 示例',
-      path: '/table',
-      component: './Table',
+      layout: false
     },
   ],
   npmClient: 'pnpm',
+  chainWebpack(config, { webpack }) {
+
+    config.devServer.stats('errors-only')
+    config.plugin('copy').use(CopyWebpackPlugin, [
+      {
+        patterns: [
+          {
+            from: path.resolve(cesiumSource, 'ThirdParty'),
+            to: 'library/ThirdParty', // dist/examples
+          },
+          {
+            from: path.resolve(cesiumSource, 'Assets'),
+            to: 'library/Assets', // dist/examples
+          },
+          {
+            from: path.resolve(cesiumSource, 'Widgets'),
+            to: 'library/Widgets', // dist/examples
+          },
+          {
+            from: path.resolve(cesiumSource, 'Workers'),
+            to: 'library/Workers', // dist/examples
+          },
+          // {
+          //   from: 'public/',
+          //   to: './',
+          // },
+        ],
+      },
+    ])
+
+  }
 });
 

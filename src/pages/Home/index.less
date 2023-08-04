@@ -1,3 +1,23 @@
+:global{
+  body{
+    background: #f0f2f5;
+    #root{
+      height: 100%;
+    }
+  }
+}
 .container {
   padding-top: 80px;
+}
+.flex{
+  display: flex;
+  height: 100%;
+  > div{
+    width: 50%;
+  }
+  .form_container{
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }
