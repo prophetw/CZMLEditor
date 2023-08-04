@@ -1,0 +1,71 @@
+{
+  "id": "marker1",
+  "position": {
+    "reference": "position2#position"
+  },
+  "label": {
+    "text": "小学图书馆",
+    "font": "36px 微软雅黑",
+    "scale": 0.5,
+    "fillColor": {
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "outlineColor": {
+      "rgba": [
+        0,
+        0,
+        0,
+        255
+      ]
+    },
+    "outlineWidth": 2,
+    "showBackground": true,
+    "backgroundColor": {
+      "rgba": [
+        255,
+        0,
+        0,
+        255
+      ]
+    }
+  },
+  "polyline": {
+    "positions": {
+      "references": [
+        "position1#position",
+        "position2#position"
+      ]
+    },
+    "width": 2,
+    "material": {
+      "stripe": {
+        "evenColor": {
+          "rgba": [
+            0,
+            255,
+            0,
+            255
+          ]
+        },
+        "oddColor": {
+          "rgba": [
+            0,
+            0,
+            255,
+            0
+          ]
+        },
+        "repeat": 1,
+        "offset": 0.5,
+        "orientation": {
+          "stripeOrientation": "VERTICAL"
+        }
+      }
+    }
+  }
+}

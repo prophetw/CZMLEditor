@@ -1,0 +1,24 @@
+{
+  "id": "billboard",
+  "position": {
+    "cartesian": [
+      30,
+      50,
+      100
+    ]
+  },
+  "billboard": {
+    "image": "motorAssets/images/flow2.png",
+    "verticalOrigin": "BOTTOM",
+    "width": 200,
+    "height": 200,
+    "horizontalOrigin": "CENTER",
+    "pixelOffset": {
+      "cartesian2": [
+        0,
+        0
+      ]
+    },
+    "disableDepthTestDistance": null
+  }
+}

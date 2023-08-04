@@ -3,10 +3,11 @@ import { RJSFSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { useState } from 'react';
 
-import targetJSON from '../../../CZMLSchemaJSON/Polygon.json'
+import targetJSON from '../../../CZMLSchemaJSON/Billboard.json'
 
 
-let jsonStr = JSON.stringify(targetJSON);
+let jsonStr = JSON.stringify(targetJSON, null, 2);
+console.log(' jsonStr ', jsonStr)
 jsonStr = jsonStr.replace(/\$ref/g, '#ref')
 
 const schemaTem = JSON.parse(jsonStr) as RJSFSchema;
@@ -15,6 +16,30 @@ const czmlSchemaTypeKeymap = {
   'Boolean.json': {
     type: 'boolean',
     enum: [true, false]
+  },
+  'String.json': {
+    type: 'string'
+  },
+  'Font.json': {
+    type: 'string',
+
+  },
+  'BackgroundPadding.json': {
+    type: 'array',
+    items: [
+      {
+        type: "number",
+        description: " offsetX",
+        default: 7
+      },
+      {
+        "type": "number",
+        description: " offsetY ",
+        default: 5
+      }
+    ],
+    additionalItems: false
+
   },
   'PositionList.json': {
     type: "array",
@@ -62,6 +87,86 @@ const czmlSchemaTypeKeymap = {
       additionalItems: false
     }
   },
+  'PixelOffset.json': {
+    type: 'array',
+    items: [
+      {
+        type: "number",
+        description: " X or Longitude",
+        default: 0
+      },
+      {
+        "type": "number",
+        description: " Y or Latitude",
+        default: 0
+      }
+    ],
+    additionalItems: false
+  },
+  'AlignedAxis.json': {
+    type: 'array',
+    items: [
+      {
+        type: "number",
+        description: " X axis",
+        default: 0
+      },
+      {
+        "type": "number",
+        description: " Y axis",
+        default: 0
+      },
+      {
+        "type": "number",
+        description: " Z axis",
+        default: 0
+      }
+    ],
+    additionalItems: false
+
+  },
+  'EyeOffset.json': {
+    type: 'array',
+    items: [
+      {
+        type: "number",
+        description: " X or Longitude",
+        default: 0
+      },
+      {
+        "type": "number",
+        description: " Y or Latitude",
+        default: 0
+      },
+      {
+        "type": "number",
+        description: " Z or Height",
+        default: 0
+      }
+    ],
+    additionalItems: false
+  },
+  'NearFarScalar.json': {
+    anyOf: [
+      {
+        type: 'null',
+        title: '未设置',
+        enum: ['null'],
+      },
+      {
+        type: 'array',
+        description: 'when at near distance, the value is nearValue, when at far distance, the value is farValue',
+        title: 'NearFarScalar',
+        // default: [0, 0, 0, 0],
+        items: {
+          type: 'number',
+        },
+        "minItems": 4,
+        "maxItems": 4,
+      }
+    ],
+  },
+
   'Color.json': {
     type: 'string',
   },
@@ -161,7 +266,7 @@ const czmlSchemaTypeKeymap = {
         "type": "object",
         "title": "Solid Color",
         "properties": {
-          "solidColor": { 
+          "solidColor": {
             "type": "object",
             "properties": {
               "color": { "type": "string", default: 'white' },
@@ -184,7 +289,7 @@ const czmlSchemaTypeKeymap = {
         "properties": {
           "type": { "type": "string", "enum": ["Grid"], "default": "Grid" },
           "color": { "type": "string" },
-          "cellAlpha": { "type": "number" , default: 1.0},
+          "cellAlpha": { "type": "number", default: 1.0 },
           "lineCount": { "type": "number" },
           "lineThickness": { "type": "number" },
           "lineOffset": { "type": "number" }
@@ -272,6 +377,9 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
             if (element.default === 'solid white') {
               delete element.default;
             }
+            if (element.default !== undefined && typeof element.default === 'string' && element.default.indexOf('[') === 0) {
+              element.default = JSON.parse(element.default);
+            }
             if (element.type === 'number') {
               console.log(' _____ ', element.default);
               element.default = +element.default;
@@ -312,7 +420,7 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
 
 CZML2RJSFAdaptor(schemaTem)
 
-const RJSFAdaptor2 = (schemaObj: RJSFSchema)=>{
+const RJSFAdaptor2 = (schemaObj: RJSFSchema) => {
 
   const properties = schemaObj.properties;
   console.log(properties);
@@ -330,7 +438,7 @@ const RJSFAdaptor2 = (schemaObj: RJSFSchema)=>{
         element.isAdvancedConfig = true;
 
 
-        if(RJSFSchemaKeymap[key] !== undefined){
+        if (RJSFSchemaKeymap[key] !== undefined) {
           element.isAdvancedConfig = RJSFSchemaKeymap[key].isAdvancedConfig;
         }
       }
@@ -365,6 +473,12 @@ const schema = schemaTem
 
 const uiSchema = {
   outlineColor: {
+    'ui:widget': 'color',
+  },
+  fillColor: {
+    'ui:widget': 'color',
+  },
+  backgroundColor: {
     'ui:widget': 'color',
   },
   "material": {

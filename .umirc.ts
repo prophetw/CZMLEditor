@@ -7,7 +7,7 @@ export default defineConfig({
   initialState: {},
   request: {},
   layout: {
-    title: '@umijs/max',
+    title: 'czml-editor',
   },
   
   routes: [
@@ -17,6 +17,7 @@ export default defineConfig({
     },
     {
       name: '首页',
+      title: 'CZML-editor',
       path: '/home',
       component: './Home',
     },

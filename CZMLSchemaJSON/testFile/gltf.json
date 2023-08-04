@@ -1,0 +1,31 @@
+{
+  "id": "bus2",
+  "model": {
+    "gltf": "motorAssets/model/car1.glb",
+    "scale": 20
+  },
+  "position": {
+    "epoch": "2019-08-04T04:00:00Z",
+    "cartesian": [
+      0,
+      100,
+      100,
+      100,
+      1,
+      100,
+      130,
+      100,
+      2,
+      150,
+      130,
+      100,
+      3,
+      170,
+      100,
+      100
+    ]
+  },
+  "orientation": {
+    "velocityReference": "#position"
+  }
+}

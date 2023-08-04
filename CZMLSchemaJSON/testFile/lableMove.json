@@ -1,0 +1,32 @@
+{
+  "id": "position2",
+  "position": {
+    "epoch": "2019-08-04T04:00:00Z",
+    "cartesian": [
+      0,
+      100,
+      100,
+      110,
+      1,
+      100,
+      100,
+      120,
+      2,
+      100,
+      100,
+      110
+    ]
+  },
+  "label": {
+    "text": "Philadelphia",
+    "font": "24px Helvetica",
+    "fillColor": {
+      "rgbaf": [
+        0,
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}
