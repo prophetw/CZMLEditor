@@ -60,8 +60,7 @@
         },
         "alignedAxis": {
             "$ref": "AlignedAxis.json",
-            "description": "The aligned axis is the unit vector, in world coordinates, that the billboard up vector points towards. The default is the zero vector, which means the billboard is aligned to the screen up vector.",
-            "default": "[0.0, 0.0, 0.0]"
+            "description": "The aligned axis is the unit vector, in world coordinates, that the billboard up vector points towards. The default is the zero vector, which means the billboard is aligned to the screen up vector."
         },
         "sizeInMeters": {
             "$ref": "Boolean.json",

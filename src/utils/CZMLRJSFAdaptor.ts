@@ -19,19 +19,18 @@ const validLabelKeys = Object.keys(BaseJSONSchemaObj.label.properties)
 const validPolygonKeys = Object.keys(BaseJSONSchemaObj.polygon.properties)
 const validPolylineKeys = Object.keys(BaseJSONSchemaObj.polyline.properties)
 
-const needToBeHandleKeyInPacket = [
+const editableKeysInPacketSchema = [
   "billboard",
   "label",
   "polygon",
   "polyline",
-  "position",
 ]
 
-console.log('validPacketKeys', validPacketKeys);
-console.log('validBillboardKeys', validBillboardKeys);
-console.log('validLabelKeys', validLabelKeys);
-console.log('validPolygonKeys', validPolygonKeys);
-console.log('validPolylineKeys', validPolylineKeys);
+// console.log('validPacketKeys', validPacketKeys);
+// console.log('validBillboardKeys', validBillboardKeys);
+// console.log('validLabelKeys', validLabelKeys);
+// console.log('validPolygonKeys', validPolygonKeys);
+// console.log('validPolylineKeys', validPolylineKeys);
 
 
 
@@ -50,21 +49,26 @@ const czmlSchemaTypeKeymap = {
 
   },
   'BackgroundPadding.json': {
-    type: 'array',
-    items: [
-      {
-        type: "number",
-        description: " offsetX",
-        default: 7
+    type: 'object',
+    properties: {
+      cartesian2: {
+        type: 'array',
+        items: [
+          {
+            type: "number",
+            description: " offsetX",
+            default: 7
+          },
+          {
+            "type": "number",
+            description: " offsetY ",
+            default: 5
+          }
+        ],
+        additionalItems: false,
+        default: [7, 5],
       },
-      {
-        "type": "number",
-        description: " offsetY ",
-        default: 5
-      }
-    ],
-    additionalItems: false
-
+    }
   },
   'PositionList.json': {
     type: "array",
@@ -134,31 +138,42 @@ const czmlSchemaTypeKeymap = {
     },
   },
   'AlignedAxis.json': {
-    type: 'object',
-    properties: {
-      "cartesian": {
-        type: 'array',
-        items: [
-          {
-            type: "number",
-            description: " X axis",
-            default: 0.0
-          },
-          {
-            "type": "number",
-            description: " Y axis",
-            default: 1.0
-          },
-          {
-            "type": "number",
-            description: " Z axis",
-            default: 0.0
+    oneOf: [
+      {
+        type: 'null',
+        title: 'undefined',
+        default: undefined,
+      },
+      {
+        type: 'object',
+        title: ' Axis ',
+        properties: {
+          "cartesian": {
+            type: 'array',
+            items: [
+              {
+                type: "number",
+                description: " X axis",
+                default: 0.0
+              },
+              {
+                "type": "number",
+                description: " Y axis",
+                default: 1.0
+              },
+              {
+                "type": "number",
+                description: " Z axis",
+                default: 0.0
+              }
+            ],
+            additionalItems: false,
+            default: [0.0, 1.0, 0.0],
           }
-        ],
-        additionalItems: false,
-        default: [0.0, 0.0, 0.0],
+        }
+
       }
-    }
+    ]
   },
   'EyeOffset.json': {
     type: 'object',
@@ -230,10 +245,14 @@ const czmlSchemaTypeKeymap = {
   },
 
   'Color.json': {
-    "type": "object",
-    "description": "A color. The color can optionally vary over time.",
-    "oneOf": [
+    oneOf: [
       {
+        type: 'null',
+        title: 'unset',
+      },
+      {
+        "type": "object",
+        "description": "A color.",
         "properties": {
           "rgba": {
             "type": "array",
@@ -241,13 +260,46 @@ const czmlSchemaTypeKeymap = {
             "minItems": 4,
             "maxItems": 4,
             "title": "RGBA Color",
-            default: [255, 255, 255, 255],
+            default: [255, 0, 0, 126],
           }
         },
         "title": "RGBA Color 0~255",
         "required": ["rgba"]
       },
+      // {
+      //   "type": "object",
+      //   "description": "A color. The color can optionally vary over time.",
+      //   "properties": {
+      //     "rgba": {
+      //       "type": "array",
+      //       "items": {
+      //         "type": "object",
+      //         properties: {
+      //           interval: {
+      //             type: 'string',
+      //             default: '2019-01-01T00:00:00Z/2019-01-01T00:00:00Z',
+      //           },
+      //           rgba: {
+      //             "type": "array",
+      //             "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+      //             "minItems": 4,
+      //             "maxItems": 4,
+      //             "title": "RGBA Color",
+      //             default: [255, 0, 0, 126],
+      //           }
+
+
+      //         },
+      //         default: [255, 0, 0, 126],
+      //       }
+      //     }
+      //   },
+      //   "title": "RGBA Color 0~255 change with time",
+      //   "required": ["rgba"]
+      // },
       {
+        "type": "object",
+        "description": "A color. The color can optionally vary over time.",
         "properties": {
           "rgbaf": {
             "type": "array",
@@ -255,7 +307,7 @@ const czmlSchemaTypeKeymap = {
             "minItems": 4,
             "maxItems": 4,
             "title": "RGBAF Color",
-            default: [1.0, 1.0, 1.0, 1.0],
+            default: [1.0, 0.0, 0.0, 0.5],
           }
         },
         "title": "RGBAF Color 0~1",
@@ -492,6 +544,7 @@ const czmlSchemaTypeKeymap = {
         type: 'string',
         format: 'uri',
         title: 'Uri or dataUri',
+        default: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACvSURBVDhPrZDRDcMgDAU9GqN0lIzijw6SUbJJygUeNQgSqepJTyHG91LVVpwDdfxM3T9TSl1EXZvDwii471fivK73cBFFQNTT/d2KoGpfGOpSIkhUpgUMxq9DFEsWv4IXhlyCnhBFnZcFEEuYqbiUlNwWgMTdrZ3JbQFoEVG53rd8ztG9aPJMnBUQf/VFraBJeWnLS0RfjbKyLJA8FkT5seDYS1Qwyv8t0B/5C2ZmH2/eTGNNBgMmAAAAAElFTkSuQmCC",
       },
       {
         type: 'array',
@@ -502,10 +555,12 @@ const czmlSchemaTypeKeymap = {
             "interval": {
               "type": "string",
               description: 'start = end = new Date().toISOString; value = start/end',
+              default: '2023-08-07T05:31:35.12Z/2024-08-07T06:31:35.12Z'
             },
             "uri": {
               "type": "string",
-              "format": "uri"
+              "format": "uri",
+              default: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACvSURBVDhPrZDRDcMgDAU9GqN0lIzijw6SUbJJygUeNQgSqepJTyHG91LVVpwDdfxM3T9TSl1EXZvDwii471fivK73cBFFQNTT/d2KoGpfGOpSIkhUpgUMxq9DFEsWv4IXhlyCnhBFnZcFEEuYqbiUlNwWgMTdrZ3JbQFoEVG53rd8ztG9aPJMnBUQf/VFraBJeWnLS0RfjbKyLJA8FkT5seDYS1Qwyv8t0B/5C2ZmH2/eTGNNBgMmAAAAAElFTkSuQmCC",
             }
           },
           "required": ["uri", "interval"]
@@ -525,18 +580,25 @@ const czmlSchemaTypeKeymap = {
     oneOf: [
       {
         "type": "null",
-        "title": "Undefined",
+        "title": "不设置",
         default: undefined,
       },
       {
-        type: 'array',
+        type: 'object',
         title: '[x y width height]',
-        items: {
-          type: 'number',
-        },
-        minItems: 4,
-        maxItems: 4,
-      }
+        properties: {
+          "boundingRectangle": {
+            "type": "array",
+            "description": "The set of coordinates specified as Cartographic values `[WestLongitude, SouthLatitude, EastLongitude, NorthLatitude]`, with values in radians.",
+            items: {
+              type: 'number',
+            },
+            minItems: 4,
+            maxItems: 4,
+            default: [0, 0, 10, 10],
+          }
+        }
+      },
     ]
   },
   'RectangleCoordinates.json': {
@@ -598,7 +660,7 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
   // 5. czml enumNames => rjsf enumNames
 
   const properties = schemaObj.properties;
-  console.log(properties);
+  // console.log(properties);
   for (let key in properties) {
     if (Object.hasOwn(properties, key)) {
       const element = properties[key];
@@ -623,6 +685,9 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
             element.type = pre_obje.type;
           }
           if (element.default !== undefined) {
+            // should handle this in czmlSchemaTypeKeymap
+            // e.g. default [0, 0]  in fact should be cartesian2 = [0, 0]
+            // element.default = undefined
             if (element.default === 'π / 180.0') {
               element.default = Math.PI / 180.0;
             }
@@ -638,7 +703,6 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
               element.default = JSON.parse(element.default);
             }
             if (element.type === 'number') {
-              console.log(' _____ ', element.default);
               element.default = +element.default;
             }
           }
@@ -683,7 +747,6 @@ const RJSFAdaptor2 = (schemaObj: RJSFSchema) => {
   // second adapt the schemaObj  can add some new features
 
   const properties = schemaObj.properties;
-  console.log(properties);
   for (let key in properties) {
     if (Object.hasOwn(properties, key)) {
       const element = properties[key];
@@ -702,16 +765,15 @@ const RJSFAdaptor2 = (schemaObj: RJSFSchema) => {
 
 const UserInputJSONAdaptor = (jsonObj: any) => {
   // handle the user input json data
-  console.log(' czml packet object ', jsonObj);
   const cloneObj = JSON.parse(JSON.stringify(jsonObj));
   if (Array.isArray(jsonObj)) {
     // [{id: ""}, {}]
     jsonObj.forEach((packet: any) => {
-      needToBeHandleKeyInPacket.forEach((key: string) => {
+      editableKeysInPacketSchema.forEach((key: string) => {
         if (packet[key]) {
           // handle the key
           const packetItem = packet[key]; // user input part   billboard polygon label schema 
-          const packetItemSchema = czmlSchemaTypeKeymap[packetItem['#ref']];
+          const packetItemSchema = editableKeysInPacketSchema[packetItem['#ref']];
           // use user input  value to replace change default value
 
 
@@ -739,4 +801,5 @@ export {
   RJSFAdaptor2,
   BaseJSONSchemaObj,
   UserInputJSONAdaptor,
+editableKeysInPacketSchema,
 }
