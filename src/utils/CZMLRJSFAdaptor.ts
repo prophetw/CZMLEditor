@@ -1,4 +1,41 @@
 import { RJSFSchema } from '@rjsf/utils';
+import BillboardJSONSchema from '../../CZMLSchemaJSON/Base/Billboard.json'
+import LabelJSONSchema from '../../CZMLSchemaJSON/Base/Label.json'
+import PolygonJSONSchema from '../../CZMLSchemaJSON/Base/Polygon.json'
+import PolylineJSONSchema from '../../CZMLSchemaJSON/Base/Polyline.json'
+import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
+
+const BaseJSONSchemaObj = {
+  billboard: BillboardJSONSchema,
+  label: LabelJSONSchema,
+  polygon: PolygonJSONSchema,
+  polyline: PolylineJSONSchema,
+  packet: PacketJSONSchema,
+}
+
+const validPacketKeys = Object.keys(BaseJSONSchemaObj.packet.properties)
+const validBillboardKeys = Object.keys(BaseJSONSchemaObj.billboard.properties)
+const validLabelKeys = Object.keys(BaseJSONSchemaObj.label.properties)
+const validPolygonKeys = Object.keys(BaseJSONSchemaObj.polygon.properties)
+const validPolylineKeys = Object.keys(BaseJSONSchemaObj.polyline.properties)
+
+const needToBeHandleKeyInPacket = [
+  "billboard",
+  "label",
+  "polygon",
+  "polyline",
+  "position",
+]
+
+console.log('validPacketKeys', validPacketKeys);
+console.log('validBillboardKeys', validBillboardKeys);
+console.log('validLabelKeys', validLabelKeys);
+console.log('validPolygonKeys', validPolygonKeys);
+console.log('validPolylineKeys', validPolylineKeys);
+
+
+
+
 
 const czmlSchemaTypeKeymap = {
   'Boolean.json': {
@@ -97,26 +134,31 @@ const czmlSchemaTypeKeymap = {
     },
   },
   'AlignedAxis.json': {
-    type: 'array',
-    items: [
-      {
-        type: "number",
-        description: " X axis",
-        default: 0
-      },
-      {
-        "type": "number",
-        description: " Y axis",
-        default: 0
-      },
-      {
-        "type": "number",
-        description: " Z axis",
-        default: 0
+    type: 'object',
+    properties: {
+      "cartesian": {
+        type: 'array',
+        items: [
+          {
+            type: "number",
+            description: " X axis",
+            default: 0.0
+          },
+          {
+            "type": "number",
+            description: " Y axis",
+            default: 1.0
+          },
+          {
+            "type": "number",
+            description: " Z axis",
+            default: 0.0
+          }
+        ],
+        additionalItems: false,
+        default: [0.0, 0.0, 0.0],
       }
-    ],
-    additionalItems: false
-
+    }
   },
   'EyeOffset.json': {
     type: 'object',
@@ -145,28 +187,51 @@ const czmlSchemaTypeKeymap = {
     },
   },
   'NearFarScalar.json': {
-    anyOf: [
+    oneOf: [
       {
         type: 'null',
         title: '未设置',
         enum: ['null'],
       },
       {
-        type: 'array',
+        type: 'object',
         description: 'when at near distance, the value is nearValue, when at far distance, the value is farValue',
-        title: 'NearFarScalar',
-        // default: [0, 0, 0, 0],
-        items: {
-          type: 'number',
-        },
-        "minItems": 4,
-        "maxItems": 4,
+        title: '[near, nearValue, far, farValue]  NearFarScalar',
+        properties: {
+          "nearFarScalar": {
+            type: 'array',
+            items: [
+              {
+                type: "number",
+                description: " near distance",
+                default: 1
+              },
+              {
+                "type": "number",
+                description: " near value",
+                default: 0.1
+              },
+              {
+                "type": "number",
+                description: " far distance",
+                default: 100
+              },
+              {
+                "type": "number",
+                description: " far value",
+                default: 1.0
+              }
+            ],
+            additionalItems: false
+          }
+        }
       }
     ],
   },
 
   'Color.json': {
     "type": "object",
+    "description": "A color. The color can optionally vary over time.",
     "oneOf": [
       {
         "properties": {
@@ -179,6 +244,7 @@ const czmlSchemaTypeKeymap = {
             default: [255, 255, 255, 255],
           }
         },
+        "title": "RGBA Color 0~255",
         "required": ["rgba"]
       },
       {
@@ -192,6 +258,7 @@ const czmlSchemaTypeKeymap = {
             default: [1.0, 1.0, 1.0, 1.0],
           }
         },
+        "title": "RGBAF Color 0~1",
         "required": ["rgbaf"]
       }
     ]
@@ -278,10 +345,17 @@ const czmlSchemaTypeKeymap = {
       },
       {
         "type": "object",
-        "title": "Distance Display Condition",
+        "title": " [near, far] DistanceDisplayCondition",
         "properties": {
-          "near": { "type": "number", "default": 0.1 },
-          "far": { "type": "number", "default": 1000.0 }
+          "distanceDisplayCondition": {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            default: [0.1, 1000],
+          }
         }
       }
     ]
@@ -413,8 +487,31 @@ const czmlSchemaTypeKeymap = {
 
   },
   'Uri.json': {
-    type: 'string',
-    format: 'uri'
+    oneOf: [
+      {
+        type: 'string',
+        format: 'uri',
+        title: 'Uri or dataUri',
+      },
+      {
+        type: 'array',
+        title: 'The URI can optionally vary with time.',
+        items: {
+          type: 'object',
+          properties: {
+            "interval": {
+              "type": "string",
+              description: 'start = end = new Date().toISOString; value = start/end',
+            },
+            "uri": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["uri", "interval"]
+        }
+      }
+    ]
     // properties: {
     //   "uri": {
     //     "type": "string",
@@ -425,14 +522,57 @@ const czmlSchemaTypeKeymap = {
   },
   'BoundingRectangle.json': {
     // https://github.com/AnalyticalGraphicsInc/czml-writer/blob/main/Schema/BoundingRectangle.json
-    type: 'array',
-    title: '[x y width height]',
-    items: {
-      type: 'number',
-    },
-    minItems: 4,
-    maxItems: 4,
-  }
+    oneOf: [
+      {
+        "type": "null",
+        "title": "Undefined",
+        default: undefined,
+      },
+      {
+        type: 'array',
+        title: '[x y width height]',
+        items: {
+          type: 'number',
+        },
+        minItems: 4,
+        maxItems: 4,
+      }
+    ]
+  },
+  'RectangleCoordinates.json': {
+
+    type: 'object',
+    title: 'Rectangle',
+    oneOf: [
+      {
+        properties: {
+          "wsen": {
+            "type": "array",
+            "description": "The set of coordinates specified as Cartographic values `[WestLongitude, SouthLatitude, EastLongitude, NorthLatitude]`, with values in radians.",
+            items: {
+              type: 'number',
+            },
+            minItems: 4,
+            maxItems: 4,
+          }
+        }
+      },
+      {
+        properties: {
+          "wsenDegrees": {
+            "type": "array",
+            "description": "The set of coordinates specified as Cartographic values `[WestLongitude, SouthLatitude, EastLongitude, NorthLatitude]`, with values in degrees.",
+            items: {
+              type: 'number',
+            },
+            minItems: 4,
+            maxItems: 4,
+          }
+        }
+      },
+    ]
+
+  },
 
 }
 
@@ -489,7 +629,7 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
             if (element.default === 'solid white') {
               delete element.default;
             }
-            if (element.default === 'white') {
+            if (element.default === 'white' || element.default === 'black') {
               element.default = {
                 rgba: [255, 255, 255, 255]
               }
@@ -560,10 +700,43 @@ const RJSFAdaptor2 = (schemaObj: RJSFSchema) => {
   }
 }
 
+const UserInputJSONAdaptor = (jsonObj: any) => {
+  // handle the user input json data
+  console.log(' czml packet object ', jsonObj);
+  const cloneObj = JSON.parse(JSON.stringify(jsonObj));
+  if (Array.isArray(jsonObj)) {
+    // [{id: ""}, {}]
+    jsonObj.forEach((packet: any) => {
+      needToBeHandleKeyInPacket.forEach((key: string) => {
+        if (packet[key]) {
+          // handle the key
+          const packetItem = packet[key]; // user input part   billboard polygon label schema 
+          const packetItemSchema = czmlSchemaTypeKeymap[packetItem['#ref']];
+          // use user input  value to replace change default value
+
+
+
+        }
+
+      })
+    })
+
+  }
+  if (typeof jsonObj === 'object') {
+
+
+  }
+
+
+  return cloneObj
+}
+
 export {
 
   czmlSchemaTypeKeymap,
   RJSFSchemaKeymap,
   CZML2RJSFAdaptor,
   RJSFAdaptor2,
+  BaseJSONSchemaObj,
+  UserInputJSONAdaptor,
 }
