@@ -10,6 +10,7 @@ export default defineConfig({
   model: {},
   initialState: {},
   request: {},
+  mfsu: false,
   layout: {
     title: 'czml-editor',
   },

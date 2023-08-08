@@ -14,10 +14,10 @@ import CZMLBillboardAndLabel from '../../../CZMLSchemaJSON/testFile/CesiumBillbo
 
 
 const DEFAULT_KEY = 'billboard'
-const czml2 = CZMLBillboardAndLabel
-console.log(' czml2 ----- ', czml2);
-const czml = CZMLRectangle
+const czml = CZMLBillboardAndLabel
+const czml2 = CZMLRectangle
 
+console.log(' czml2 ----- ', czml2);
 console.log(' czml ----- ', czml);
 
 // 用户导入了  czml 
@@ -130,6 +130,7 @@ const HomePage: React.FC = () => {
 
 
   const togglePacket = () => {
+    console.log(czml);
     setExpandPacket(!expandPacket)
   }
 
