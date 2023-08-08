@@ -3,6 +3,7 @@ import BillboardJSONSchema from '../../CZMLSchemaJSON/Base/Billboard.json'
 import LabelJSONSchema from '../../CZMLSchemaJSON/Base/Label.json'
 import PolygonJSONSchema from '../../CZMLSchemaJSON/Base/Polygon.json'
 import PolylineJSONSchema from '../../CZMLSchemaJSON/Base/Polyline.json'
+import RectangleJSONSchema from '../../CZMLSchemaJSON/Base/Rectangle.json'
 import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
 
 const BaseJSONSchemaObj = {
@@ -11,6 +12,7 @@ const BaseJSONSchemaObj = {
   polygon: PolygonJSONSchema,
   polyline: PolylineJSONSchema,
   packet: PacketJSONSchema,
+  rectangle: RectangleJSONSchema,
 }
 
 const validPacketKeys = Object.keys(BaseJSONSchemaObj.packet.properties)
@@ -24,6 +26,7 @@ const editableKeysInPacketSchema = [
   "label",
   "polygon",
   "polyline",
+  "rectangle",
 ]
 
 // console.log('validPacketKeys', validPacketKeys);
@@ -35,6 +38,79 @@ const editableKeysInPacketSchema = [
 
 
 
+const czmlSchemaDefinitions = {
+  "Color.json": {
+    oneOf: [
+      {
+        type: 'null',
+        title: 'unset',
+      },
+      {
+        "type": "object",
+        "description": "A color.",
+        "properties": {
+          "rgba": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+            "minItems": 4,
+            "maxItems": 4,
+            "title": "RGBA Color",
+            default: [255, 0, 0, 126],
+          }
+        },
+        "title": "RGBA Color 0~255",
+        "required": ["rgba"]
+      },
+      // {
+      //   "type": "object",
+      //   "description": "A color. The color can optionally vary over time.",
+      //   "properties": {
+      //     "rgba": {
+      //       "type": "array",
+      //       "items": {
+      //         "type": "object",
+      //         properties: {
+      //           interval: {
+      //             type: 'string',
+      //             default: '2019-01-01T00:00:00Z/2019-01-01T00:00:00Z',
+      //           },
+      //           rgba: {
+      //             "type": "array",
+      //             "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+      //             "minItems": 4,
+      //             "maxItems": 4,
+      //             "title": "RGBA Color",
+      //             default: [255, 0, 0, 126],
+      //           }
+
+
+      //         },
+      //         default: [255, 0, 0, 126],
+      //       }
+      //     }
+      //   },
+      //   "title": "RGBA Color 0~255 change with time",
+      //   "required": ["rgba"]
+      // },
+      {
+        "type": "object",
+        "description": "A color. The color can optionally vary over time.",
+        "properties": {
+          "rgbaf": {
+            "type": "array",
+            "items": { "type": "number", "minimum": 0, "maximum": 1 },
+            "minItems": 4,
+            "maxItems": 4,
+            "title": "RGBAF Color",
+            default: [1.0, 0.0, 0.0, 0.5],
+          }
+        },
+        "title": "RGBAF Color 0~1",
+        "required": ["rgbaf"]
+      }
+    ]
+  }
+}
 
 const czmlSchemaTypeKeymap = {
   'Boolean.json': {
@@ -610,6 +686,7 @@ const czmlSchemaTypeKeymap = {
         properties: {
           "wsen": {
             "type": "array",
+            title: "west south east north in radians.",
             "description": "The set of coordinates specified as Cartographic values `[WestLongitude, SouthLatitude, EastLongitude, NorthLatitude]`, with values in radians.",
             items: {
               type: 'number',
@@ -622,6 +699,7 @@ const czmlSchemaTypeKeymap = {
       {
         properties: {
           "wsenDegrees": {
+            title: "west south east north in degrees.",
             "type": "array",
             "description": "The set of coordinates specified as Cartographic values `[WestLongitude, SouthLatitude, EastLongitude, NorthLatitude]`, with values in degrees.",
             items: {
@@ -678,7 +756,13 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
 
         // element.type = 'string';
         // adjust type from pre keymap 
-        const ref = element['#ref'];
+        const ref = element['#ref']; //  replace #ref => rsjf definitions
+        // in czml ref is like  Color.json 
+        // in rsjf ref is like  #/definitions/Color.json 
+
+        
+
+
         if (czmlSchemaTypeKeymap[ref] !== undefined) {
           const pre_obje = czmlSchemaTypeKeymap[ref];
           if (pre_obje.type) {

@@ -8,148 +8,15 @@ import 'cesium/Build/Cesium/Widgets/widgets.css'
 
 import { CZML2RJSFAdaptor, RJSFAdaptor2, BaseJSONSchemaObj, editableKeysInPacketSchema } from '@/utils/CZMLRJSFAdaptor';
 
+import CZMLRectangle from '../../../CZMLSchemaJSON/testFile/CesiumCZMLColors.json'
+import CZMLBillboardAndLabel from '../../../CZMLSchemaJSON/testFile/CesiumBillboardAndLabel.json'
+
 
 
 const DEFAULT_KEY = 'billboard'
-
-
-
-const czml1 = [
-  {
-    id: "document",
-    name: "CZML Colors",
-    version: "1.0",
-  },
-  {
-    id: "rgba",
-    name: "Rectangle with outline using RGBA Colors",
-    rectangle: {
-      coordinates: {
-        wsenDegrees: [-120, 40, -110, 50],
-      },
-      fill: true,
-      material: {
-        solidColor: {
-          color: {
-            rgba: [255, 0, 0, 100],
-          },
-        },
-      },
-      height: 0, // disables ground clamping, needed for outlines
-      outline: true,
-      outlineColor: {
-        rgba: [255, 0, 0, 255],
-      },
-    },
-  },
-  {
-    id: "rgbaf",
-    name: "Rectangle using RGBAF Colors",
-    rectangle: {
-      coordinates: { wsenDegrees: [-100, 40, -90, 50] },
-      fill: true,
-      material: {
-        solidColor: {
-          color: {
-            rgbaf: [1, 0, 0, 0.39],
-          },
-        },
-      },
-      height: 0, // disables ground clamping, needed for outlines
-      outline: true,
-      outlineColor: {
-        rgba: [255, 255, 0, 255],
-      },
-    },
-  },
-];
-console.log(' czml1 ', czml1);
-
-const czml = [
-  {
-    "id": "document",
-    "name": "Basic CZML billboard and label",
-    "version": "1.0"
-  },
-  {
-    "id": "some-unique-id",
-    "name": "AGI",
-    "description": "<p><a href='http://www.agi.com' target='_blank'>Analytical Graphics, Inc.</a> (AGI) founded Cesium.</p>",
-    "billboard": {
-      // "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACvSURBVDhPrZDRDcMgDAU9GqN0lIzijw6SUbJJygUeNQgSqepJTyHG91LVVpwDdfxM3T9TSl1EXZvDwii471fivK73cBFFQNTT/d2KoGpfGOpSIkhUpgUMxq9DFEsWv4IXhlyCnhBFnZcFEEuYqbiUlNwWgMTdrZ3JbQFoEVG53rd8ztG9aPJMnBUQf/VFraBJeWnLS0RfjbKyLJA8FkT5seDYS1Qwyv8t0B/5C2ZmH2/eTGNNBgMmAAAAAElFTkSuQmCC",
-      // "scale": 1.0
-      "eyeOffset": {
-        "cartesian": [0, 0, 0]
-      },
-      "horizontalOrigin": "CENTER",
-      "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACvSURBVDhPrZDRDcMgDAU9GqN0lIzijw6SUbJJygUeNQgSqepJTyHG91LVVpwDdfxM3T9TSl1EXZvDwii471fivK73cBFFQNTT/d2KoGpfGOpSIkhUpgUMxq9DFEsWv4IXhlyCnhBFnZcFEEuYqbiUlNwWgMTdrZ3JbQFoEVG53rd8ztG9aPJMnBUQf/VFraBJeWnLS0RfjbKyLJA8FkT5seDYS1Qwyv8t0B/5C2ZmH2/eTGNNBgMmAAAAAElFTkSuQmCC",
-      "pixelOffset": {
-        "cartesian2": [0, 0]
-      },
-      "scale": 1.5,
-      "show": true,
-      "verticalOrigin": "CENTER"
-    },
-    "label": {
-      "fillColor": {
-        "rgba": [
-          255,
-          255,
-          255,
-          255
-        ]
-      },
-      "font": "12pt Lucida Console",
-      "horizontalOrigin": "LEFT",
-      "verticalOrigin": "BOTTOM",
-      "pixelOffset": {
-        "cartesian2": [
-          8,
-          0
-        ]
-      },
-      "style": "FILL",
-      "text": "AGIGo go go",
-      "showBackground": true,
-      "backgroundColor": {
-        "rgba": [
-          112,
-          89,
-          57,
-          200
-        ]
-      }
-      // "backgroundColor": {
-      //     "interval": "2023-08-07T00:00:00Z/2023-08-07T00:05:00Z",
-      //     "epoch": "2023-08-07T00:00:00Z",
-      //     "rgba": [
-      //       {
-      //         "interval": "2023-08-07T00:00:00Z/2023-08-07T00:02:00Z",
-      //         "rgba": [255, 0, 0, 128]
-      //       },
-      //       {
-      //         "interval": "2023-08-07T00:02:00Z/2023-08-07T00:05:00Z",
-      //         "rgba": [0, 0, 255, 128]
-      //       }
-      //     ]
-      // }
-    },
-    "position": {
-      "cartesian": [
-        1216361.4096947117,
-        -4736253.175342511,
-        4081267.4865667094
-      ]
-    },
-     "clock": {
-      "interval": "2023-08-07T00:00:00Z/2023-08-07T00:05:00Z",
-      "currentTime": "2023-08-07T00:00:00Z",
-      "multiplier": 1,
-      "range": "LOOP_STOP",
-      "step": "SYSTEM_CLOCK_MULTIPLIER"
-    },
-  }
-]
+const czml2 = CZMLBillboardAndLabel
+console.log(' czml2 ----- ', czml2);
+const czml = CZMLRectangle
 
 console.log(' czml ----- ', czml);
 
@@ -228,7 +95,7 @@ const HomePage: React.FC = () => {
     return cloneObj
   }
 
-  const initSchema = ()=>{
+  const initSchema = (editKey: string) => {
     const targetJSON = BaseJSONSchemaObj[editKey]
     let jsonStr = JSON.stringify(targetJSON, null, 2);
     // console.log(' jsonStr ', jsonStr)
@@ -237,6 +104,8 @@ const HomePage: React.FC = () => {
 
     CZML2RJSFAdaptor(schemaTem)
     RJSFAdaptor2(schemaTem)
+
+    console.log(' init ', schemaTem);
 
     const schema = schemaTem
     setFormSchema(schema)
@@ -250,7 +119,6 @@ const HomePage: React.FC = () => {
     viewer.zoomTo(dataSourcePromise);
     setViewer(viewer);
     setPacketAry(czml)
-    initSchema();
     return () => {
       // viewer.dataSources.remove(dataSourcePromise);
       const container = document.getElementById('cesiumContainer')
@@ -273,10 +141,11 @@ const HomePage: React.FC = () => {
 
   const edit = (item, key) => {
     setFormData(null)
-    setTimeout(()=>{
+    setTimeout(() => {
       setEditKey(key);
-      initSchema();
+      initSchema(key);
       setCurPacket(item)
+      console.log(' item key ', item, key);
       setFormData(item[key])
     })
   }
@@ -287,23 +156,23 @@ const HomePage: React.FC = () => {
       {expandPacket && <>
         {packetObj.map((item, index) => {
           return <div key={index} className={styles.packet_item}>
-            <div className={styles.packet_item_title} onClick={()=>{
+            <div className={styles.packet_item_title} onClick={() => {
               expandPacketItem(item)
             }}>
               <span className={styles.packet_item_title_name}>{item.id}</span>
               <span className={styles.packet_item_title_type}>{item.name}</span>
               <div className={styles.packet_item_keys}>
                 {item.expand && Object.keys(item).map((key, index) => {
-                  if(editableKeysInPacketSchema.indexOf(key) === -1){
+                  if (editableKeysInPacketSchema.indexOf(key) === -1) {
                     return null
                   }
                   return <div key={index} className={styles.packet_item_key}>
-                        <span className={styles.packet_item_key_name} onClick={(e)=>{
-                          edit(item, key)
-                          e.stopPropagation()
-                        }}>{key}</span>
-                    </div>
-                  })
+                    <span className={styles.packet_item_key_name} onClick={(e) => {
+                      edit(item, key)
+                      e.stopPropagation()
+                    }}>{key}</span>
+                  </div>
+                })
                 }
 
               </div>
@@ -315,7 +184,7 @@ const HomePage: React.FC = () => {
         })}
       </>}
 
-    
+
     </>
 
     return renderHTML
@@ -328,15 +197,11 @@ const HomePage: React.FC = () => {
         </div>
         <div className={styles.form_container}>
           <div className={styles.opt_container}>
-            Packet 结构 <span onClick={togglePacket}>toggle</span>
+            <span onClick={togglePacket}>Packet 结构 展开/关闭</span>
             {packetAry && renderPacketSchema(packetAry)}
-            {/* <div>
-              {
-                czml.map((item, index) => {
-                  return <div key={index}>{ +index} toggle </div>
-                })
-              }
-            </div> */}
+
+
+
           </div>
           {formData && <Form
             formData={formData}
