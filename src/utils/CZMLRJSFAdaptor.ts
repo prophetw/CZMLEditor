@@ -4,6 +4,8 @@ import LabelJSONSchema from '../../CZMLSchemaJSON/Base/Label.json'
 import PolygonJSONSchema from '../../CZMLSchemaJSON/Base/Polygon.json'
 import PolylineJSONSchema from '../../CZMLSchemaJSON/Base/Polyline.json'
 import RectangleJSONSchema from '../../CZMLSchemaJSON/Base/Rectangle.json'
+import PointJSONSchema from '../../CZMLSchemaJSON/Base/Point.json'
+import ModelJSONSchema from '../../CZMLSchemaJSON/Base/Model.json'
 import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
 
 const BaseJSONSchemaObj = {
@@ -11,7 +13,9 @@ const BaseJSONSchemaObj = {
   label: LabelJSONSchema,
   polygon: PolygonJSONSchema,
   polyline: PolylineJSONSchema,
+  point: PointJSONSchema,
   packet: PacketJSONSchema,
+  model: ModelJSONSchema,
   rectangle: RectangleJSONSchema,
 }
 
@@ -26,7 +30,9 @@ const editableKeysInPacketSchema = [
   "label",
   "polygon",
   "polyline",
+  "point",
   "rectangle",
+  "model"
 ]
 
 // console.log('validPacketKeys', validPacketKeys);
@@ -72,50 +78,166 @@ const czmlSchemaTypeKeymap = {
     }
   },
   'PositionList.json': {
-    type: "array",
-    items: {
-      type: "number",
-    },
-    minItems: 3,
-  },
-  'Point.json': {
-    type: 'array',
-    items: [
+    oneOf: [
       {
-        type: "number",
-        description: " X or Longitude",
+        type: "object",
+        title: ' Longitude, Latitude, Height in radians',
+        properties: {
+          cartographicRadians: {
+            type: 'array',
+            items:
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+            minItems: 9,
+          }
+        },
       },
       {
-        "type": "number",
-        description: " Y or Latitude"
+        type: "object",
+        title: ' Longitude, Latitude, Height in degrees',
+        properties: {
+          cartographicDegrees: {
+            type: 'array',
+            items:
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in degrees",
+              default: 0,
+            },
+            minItems: 9,
+          }
+        },
       },
       {
-        "type": "number",
-        description: " Z or Height"
+        type: "object",
+        title: 'X, Y, Z in cartesian coordinates',
+        properties: {
+          cartesian: {
+            type: 'array',
+            items:
+            {
+              type: "number",
+              description: " X, Y, Z",
+              default: 0,
+            },
+            minItems: 9,
+          }
+        },
       }
     ],
-    additionalItems: false
+  },
+  'Position.json': {
+    type: 'Object',
+    properties: {
+      cartographicDegrees: {
+        type: 'array',
+        items: [
+          {
+            type: "number",
+            description: " X or Longitude",
+          },
+          {
+            "type": "number",
+            description: " Y or Latitude"
+          },
+          {
+            "type": "number",
+            description: " Z or Height"
+          }
+        ],
+        additionalItems: false
+      },
+      default: {
+        cartographicDegrees: [0, 0, 0]
+      }
+    },
   },
   'PositionListOfLists.json': {
-    type: 'array',
-    items: {
-      type: 'array',
-      items: [
-        {
-          type: "number",
-          description: " X or Longitude",
+    oneOf: [
+      {
+        type: 'null',
+        description: 'undefined',
+        title: '未设置'
+      },
+      {
+        type: "array",
+        title: ' Longitude, Latitude, Height in radians',
+        items: {
+          type: 'array',
+          items: [
+            {
+              type: "number",
+              description: " Longitude in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: " Latitude in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: "  Height in meters",
+              default: 0,
+            },
+          ],
+          additionalItems: false
         },
-        {
-          "type": "number",
-          description: " Y or Latitude"
+      },
+      {
+        type: "array",
+        title: ' Longitude, Latitude, Height in degrees',
+        items: {
+          type: 'array',
+          items: [
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+          ],
+          additionalItems: false
         },
-        {
-          "type": "number",
-          description: " Z or Height"
-        }
-      ],
-      additionalItems: false
-    }
+      },
+      {
+        type: "array",
+        title: 'X, Y, Z in cartesian coordinates',
+        items: {
+          type: 'array',
+          items: [
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+            {
+              type: "number",
+              description: " Longitude, Latitude, Height in radians",
+              default: 0,
+            },
+          ],
+          additionalItems: false
+        },
+      }
+    ],
   },
   'PixelOffset.json': {
     type: 'object',
@@ -254,42 +376,17 @@ const czmlSchemaTypeKeymap = {
         "properties": {
           "rgba": {
             "type": "array",
-            "items": [
-              {
-                "type": "integer",
-                "minimum": 0,
-                "description": "Red",
-                "maximum": 255,
-                "default": 255
-              },
-              {
-                "type": "integer",
-                "minimum": 0,
-                "description": "Green",
-                "maximum": 255,
-                "default": 255
-              },
-              {
-                "type": "integer",
-                "minimum": 0,
-                "description": "Blue",
-                "maximum": 255,
-                "default": 255
-              },
-              {
-                "type": "integer",
-                "minimum": 0,
-                "description": "alpha",
-                "maximum": 255,
-                "default": 255
-              },
-            ],
-            additionalItems: false,
-            "title": "RGBA Color",
-            default: [255, 255, 255, 255]
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255,
+              "default": 0
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "title": "RGBAF Color"
           }
         },
-        additionalItems: false,
         "title": "RGBA Color 0~255",
         "required": ["rgba"],
         default: {
@@ -347,25 +444,117 @@ const czmlSchemaTypeKeymap = {
       }
     ]
   },
+  'ColorBlendMode.json': {
+    type: 'object',
+    properties: {
+      "colorBlendMode": {
+        type: 'string',
+        enum: ['HIGHLIGHT', 'MIX', 'REPLACE'],
+        enumNames: ['高亮', '混合', '替换'],
+        default: 'MIX',
+      },
+      required: ['colorBlendMode'],
+    }
+  },
+  'Translation.json': {
+    type: 'object',
+    properties: {
+      "cartesian": {
+        type: 'array',
+        items: {
+          type: 'number',
+          default: 0,
+        },
+        minItems: 3,
+        maxItems: 3,
+        default: [0, 0, 0],
+        additionalItems: false,
+      }
+    }
+  },
+  'Scale.json': {
+    type: 'object',
+    properties: {
+      "cartesian": {
+        type: 'array',
+        items: {
+          type: 'number',
+          default: 0,
+        },
+        minItems: 3,
+        maxItems: 3,
+        default: [0, 0, 0],
+        additionalItems: false,
+      }
+    }
+  },
+  'Rotation.json': {
+    type: 'object',
+    properties: {
+      "unitQuaternion": {
+        type: 'array',
+        items: {
+          type: 'number',
+          default: 0,
+        },
+        minItems: 4,
+        maxItems: 4,
+        default: [0, 0, 0, 0],
+        additionalItems: false,
+      }
+    }
+  },
+  'NodeTransformation.json': {
+    "type": "object",
+    "properties": {
+      "translation": {
+        "$ref": "#/definitions/Translation.json",
+        "description": "The translation to apply to the model node.",
+        "default": [0.0, 0.0, 0.0]
+      },
+      "rotation": {
+        "$ref": "#/definitions/Rotation.json",
+        "description": "The rotation to apply to the model node.",
+        "default": [0.0, 0.0, 0.0, 1.0]
+      },
+      "scale": {
+        "$ref": "#/definitions/Scale.json",
+        "description": "The scaling to apply to the model node.",
+        "default": [1.0, 1.0, 1.0]
+      }
+    }
+  },
+  'NodeTransformations.json': {
+    "title": "NodeTransformations",
+    "description": "A mapping of node names to node transformations.",
+    "type": "object",
+    "additionalProperties": {
+      "$ref": "#/definitions/NodeTransformation.json",
+      "description": "Transformations to apply to a particular node in a 3D model.",
+    },
+  },
+  'Articulation.json': {
+    "type": "object",
+    "properties": {
+      number: {
+        type: 'number',
+        default: 1.0
+      },
+    }
+  },
+  'Articulations.json': {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://analyticalgraphicsinc.github.io/czml-writer/Schema/Articulations.json",
+    "title": "Articulations",
+    "description": "A mapping of keys to articulation values, where the keys are the name of the articulation, a single space, and the name of the stage.",
+    "type": "object",
+    "additionalProperties": {
+      "$ref": "#/definitions/Articulation.json",
+      "description": "Articulation values to apply to a 3D model."
+    }
+  },
   'Double.json': {
     type: 'number',
-    // anyOf: [
-    //     { type: 'number' }, // 定义第一种类型：浮点数字
-    //     {
-    //       type: 'array',
-    //       items: {
-    //         type: 'object',
-    //         properties: {
-    //           Time: {
-    //             type: 'string', // ISO 8601 date and time string 或者 seconds since epoch
-    //           },
-    //           Value: {
-    //             type: 'number',
-    //           }
-    //         }
-    //       }
-    //     },
-    // ],
   },
   'HorizontalOrigin.json': {
     type: 'string',
@@ -402,15 +591,13 @@ const czmlSchemaTypeKeymap = {
   },
   'ArcType.json': {
     type: 'string',
-    enum: ['NONE', 'GEODESIC', 'RHUMB'],
-    enumNames: ['无', '大圆弧', '等角弧'],
-    default: 'GEODESIC',
+    enum: ['GEODESIC', 'RHUMB'],
+    enumNames: ['大圆弧', '等角弧']
   },
   'ShadowMode.json': {
     type: 'string',
     enum: ['DISABLED', 'ENABLED', 'CAST_ONLY', 'RECEIVE_ONLY'],
-    enumNames: ['全关闭', '全开启', '仅投射阴影', '仅接受阴影'],
-    default: 'DISABLED',
+    enumNames: ['全关闭', '全开启', '仅投射阴影', '仅接受阴影']
   },
   'ClassificationType.json': {
     type: 'string',
@@ -445,7 +632,7 @@ const czmlSchemaTypeKeymap = {
     ]
   },
   'Material.json': {
-    "anyOf": [
+    "oneOf": [
       {
         "type": "object",
         "title": "Solid Color",
@@ -453,62 +640,82 @@ const czmlSchemaTypeKeymap = {
           "solidColor": {
             "type": "object",
             "properties": {
-              "color": { "type": "string", default: 'white' },
+              "color": {
+                "$ref": "#/definitions/Color.json",
+              },
             },
           }
         },
+        required: ['solidColor'],
+        additionalProperties: false,
       },
-      {
-        "type": "object",
-        "title": "Image",
-        "properties": {
-          "type": { "type": "string", "enum": ["Image"], "default": "Image" },
-          "url": { "type": "string" }
-        },
-        "required": ["type", "url"]
-      },
-      {
-        "type": "object",
-        "title": "Grid",
-        "properties": {
-          "type": { "type": "string", "enum": ["Grid"], "default": "Grid" },
-          "color": { "type": "string" },
-          "cellAlpha": { "type": "number", default: 1.0 },
-          "lineCount": { "type": "number" },
-          "lineThickness": { "type": "number" },
-          "lineOffset": { "type": "number" }
-        },
-        "required": ["type", "color", "cellAlpha", "lineCount", "lineThickness", "lineOffset"]
-      },
-      {
-        "type": "object",
-        "title": "Stripe",
-        "properties": {
-          "type": { "type": "string", "enum": ["Stripe"], "default": "Stripe" },
-          "orientation": { "type": "string" },
-          "evenColor": { "type": "string" },
-          "oddColor": { "type": "string" },
-          "offset": { "type": "number" },
-          "repeat": { "type": "number" }
-        },
-        "required": ["type", "orientation", "evenColor", "oddColor", "offset", "repeat"]
-      },
+      // {
+      //   "type": "null",
+      //   "title": "未设置",
+      // },
+      // {
+      //   "type": "object",
+      //   "title": "Image",
+      //   "properties": {
+      //     "url": { "type": "string" }
+      //   },
+      //   "required": ["url"]
+      // },
+      // {
+      //   "type": "object",
+      //   "title": "Grid",
+      //   "properties": {
+      //     "color": { "type": "string" },
+      //     "cellAlpha": { "type": "number", default: 1.0 },
+      //     "lineCount": { "type": "number" },
+      //     "lineThickness": { "type": "number" },
+      //     "lineOffset": { "type": "number" }
+      //   },
+      //   "required": ["color", "cellAlpha", "lineCount", "lineThickness", "lineOffset"]
+      // },
+      // {
+      //   "type": "object",
+      //   "title": "Stripe",
+      //   "properties": {
+      //     "orientation": { "type": "string" },
+      //     "evenColor": { "type": "string" },
+      //     "oddColor": { "type": "string" },
+      //     "offset": { "type": "number" },
+      //     "repeat": { "type": "number" }
+      //   },
+      //   "required": ["orientation", "evenColor", "oddColor", "offset", "repeat"]
+      // },
       {
         "type": "object",
         "title": "Checkerboard",
         "properties": {
-          "type": { "type": "string", "enum": ["Checkerboard"], "default": "Checkerboard" },
-          "evenColor": { "type": "string" },
-          "oddColor": { "type": "string" },
-          "repeat": { "type": "number" }
+          "checkerboard": {
+            "type": "object",
+            properties: {
+              "evenColor": { "$ref": "#/definitions/Color.json" },
+              "oddColor": { "$ref": "#/definitions/Color.json" },
+              "repeat": {
+                oneOf: [
+                  { "type": "null" },
+                  { "type": "number" },
+                ]
+              },
+              "required": ["evenColor", "oddColor"]
+            }
+          },
         },
-        "required": ["type", "evenColor", "oddColor", "repeat"]
-      }
+        "required": ['checkerboard'],
+        additionalProperties: false,
+      },
     ]
 
   },
   'PolylineMaterial.json': {
-    "anyOf": [
+    "oneOf": [
+      {
+        "type": "null",
+        "title": "未设置",
+      },
       {
         "type": "object",
         "title": "Solid Color",
@@ -516,57 +723,38 @@ const czmlSchemaTypeKeymap = {
           "solidColor": {
             "type": "object",
             "properties": {
-              "color": { "type": "string", default: 'white' },
+              "color": {
+                "type": "object",
+                "$ref": "#/definitions/Color.json",
+              },
             },
-          }
+          },
         },
-      },
-      {
-        "type": "object",
-        "title": "Image",
-        "properties": {
-          "type": { "type": "string", "enum": ["Image"], "default": "Image" },
-          "url": { "type": "string" }
-        },
-        "required": ["type", "url"]
-      },
-      {
-        "type": "object",
-        "title": "Grid",
-        "properties": {
-          "type": { "type": "string", "enum": ["Grid"], "default": "Grid" },
-          "color": { "type": "string" },
-          "cellAlpha": { "type": "number", default: 1.0 },
-          "lineCount": { "type": "number" },
-          "lineThickness": { "type": "number" },
-          "lineOffset": { "type": "number" }
-        },
-        "required": ["type", "color", "cellAlpha", "lineCount", "lineThickness", "lineOffset"]
-      },
-      {
-        "type": "object",
-        "title": "Stripe",
-        "properties": {
-          "type": { "type": "string", "enum": ["Stripe"], "default": "Stripe" },
-          "orientation": { "type": "string" },
-          "evenColor": { "type": "string" },
-          "oddColor": { "type": "string" },
-          "offset": { "type": "number" },
-          "repeat": { "type": "number" }
-        },
-        "required": ["type", "orientation", "evenColor", "oddColor", "offset", "repeat"]
+        "required": ["solidColor"],
+        additionalProperties: false
       },
       {
         "type": "object",
         "title": "Checkerboard",
         "properties": {
-          "type": { "type": "string", "enum": ["Checkerboard"], "default": "Checkerboard" },
-          "evenColor": { "type": "string" },
-          "oddColor": { "type": "string" },
-          "repeat": { "type": "number" }
+          "checkerboard": {
+            "type": "object",
+            properties: {
+              "evenColor": { "$ref": "#/definitions/Color.json" },
+              "oddColor": { "$ref": "#/definitions/Color.json" },
+              "repeat": {
+                oneOf: [
+                  { "type": "null" },
+                  { "type": "number" },
+                ]
+              },
+              "required": ["evenColor", "oddColor"]
+            }
+          },
         },
-        "required": ["type", "evenColor", "oddColor", "repeat"]
-      }
+        "required": ['checkerboard'],
+        additionalProperties: false,
+      },
     ]
 
   },
@@ -689,6 +877,7 @@ const keyThatNeedSkipDefaultHandle = [
   'backgroundPadding',
   'pixelOffset',
   'backgroundColor',
+  'material',
 ]
 
 const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {

@@ -51,8 +51,7 @@
         },
         "silhouetteColor": {
             "$ref": "Color.json",
-            "description": "The color of the silhouette drawn around the model.",
-            "default": "red"
+            "description": "The color of the silhouette drawn around the model."
         },
         "silhouetteSize": {
             "$ref": "Double.json",
@@ -61,8 +60,7 @@
         },
         "color": {
             "$ref": "Color.json",
-            "description": "The color to blend with the model's rendered color.",
-            "default": "white"
+            "description": "The color to blend with the model's rendered color."
         },
         "colorBlendMode": {
             "$ref": "ColorBlendMode.json",

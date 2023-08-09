@@ -38,6 +38,10 @@ export default defineConfig({
       {
         patterns: [
           {
+            from: path.resolve(__dirname, 'public'),
+            to: './',
+          },
+          {
             from: path.resolve(cesiumSource, 'ThirdParty'),
             to: 'library/ThirdParty', // dist/examples
           },
@@ -53,10 +57,6 @@ export default defineConfig({
             from: path.resolve(cesiumSource, 'Workers'),
             to: 'library/Workers', // dist/examples
           },
-          // {
-          //   from: 'public/',
-          //   to: './',
-          // },
         ],
       },
     ])

@@ -10,15 +10,39 @@ import { CZML2RJSFAdaptor, RJSFAdaptor2, BaseJSONSchemaObj, editableKeysInPacket
 
 import CZMLRectangle from '../../../CZMLSchemaJSON/testFile/CesiumCZMLColors.json'
 import CZMLBillboardAndLabel from '../../../CZMLSchemaJSON/testFile/CesiumBillboardAndLabel.json'
+import CZMLPoint from '../../../CZMLSchemaJSON/testFile/CesiumPoint.json'
+import CZMLPointTime from '../../../CZMLSchemaJSON/testFile/CesiumPointTimeDynamic.json'
+import CZMLPolygon from '../../../CZMLSchemaJSON/testFile/CesiumPolygon.json'
+import CZMLPolyline from '../../../CZMLSchemaJSON/testFile/CesiumPolyline.json'
+import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.json'
+import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
+import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 
 
 
 const DEFAULT_KEY = 'billboard'
-const czml = CZMLBillboardAndLabel
+const czml1 = CZMLBillboardAndLabel
 const czml2 = CZMLRectangle
+let czml = CZMLPoint
+// @ts-ignore
+czml = CZMLPolygon
+// @ts-ignore
+czml = CZMLPolylineDef
+// @ts-ignore
+czml = CZMLPolyline
+// @ts-ignore
+czml = CZMLPolylineRed
+// @ts-ignore
+czml = CZMLBillboardAndLabel
+// @ts-ignore
+czml = CZMLModel
 
-console.log(' czml2 ----- ', czml2);
-console.log(' czml ----- ', czml);
+console.log(' Point ', CZMLPointTime);
+console.log(' polyline ', CZMLPolyline);
+console.log(' polygon ', CZMLPolygon);
+console.log(' billboard and label ----- ', czml1);
+console.log(' rectangle ----- ', czml2);
+console.log(' czml ----- ', JSON.stringify(czml, null, 2));
 
 // 用户导入了  czml 
 // 需要对 czml 进行解析 补充默认的字段
@@ -80,7 +104,8 @@ const HomePage: React.FC = () => {
       console.log(' end czml ', e.formData);
       const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
       cesiumViewer.dataSources.add(dataSourcePromise);
-      cesiumViewer.zoomTo(dataSourcePromise);
+      console.log(' cesium data sources ---- ', cesiumViewer.dataSources);
+      // cesiumViewer.zoomTo(dataSourcePromise);
     }
   }
 
@@ -113,7 +138,14 @@ const HomePage: React.FC = () => {
 
 
   useEffect(() => {
-    const viewer = new Cesium.Viewer("cesiumContainer");
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      contextOptions: {
+        webgl: {
+          preserveDrawingBuffer: true,
+        },
+      }
+    });
+    console.log(' viewer ', viewer);
     const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
     viewer.dataSources.add(dataSourcePromise);
     viewer.zoomTo(dataSourcePromise);
@@ -210,6 +242,9 @@ const HomePage: React.FC = () => {
             schema={formSchema}
             validator={validator}
             uiSchema={uiSchema}
+            experimental_defaultFormStateBehavior={{
+              emptyObjectFields: 'skipDefaults',
+            }}
           />}
         </div>
 
