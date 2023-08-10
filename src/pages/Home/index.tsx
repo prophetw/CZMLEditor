@@ -23,8 +23,6 @@ import { Button, Select } from 'antd';
 
 const DEFAULT_KEY = 'billboard'
 
-// 用户导入了  czml 
-// 需要对 czml 进行解析 补充默认的字段
 const czmlDemoKeymap = {
   model: CZMLModel,
   billboard: CZMLBillboardAndLabel,
@@ -281,7 +279,7 @@ const HomePage: React.FC = () => {
         </div>
         <div className={styles.form_container}>
           <div className={styles.opt_container}>
-            <span onClick={togglePacket}>Packet 结构 展开/关闭</span>
+            <span onClick={togglePacket}>Packet struct toggle</span>
             {packetAry && renderPacketSchema(packetAry)}
 
             <Select style={{
