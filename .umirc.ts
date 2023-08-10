@@ -7,6 +7,7 @@ export default defineConfig({
   antd: {},
   access: {},
   hash: true,
+  esbuild: false,
   model: {},
   initialState: {},
   request: {},
