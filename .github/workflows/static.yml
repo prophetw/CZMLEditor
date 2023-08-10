@@ -2,9 +2,10 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+  workflow_run:
+    workflows: ["NodeJS Build Webpack"]  # 这里的名称应与 first-workflow.yml 中定义的名称相匹配
+    types:
+      - completed  # 当第一个 workflow 完成时触发
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
