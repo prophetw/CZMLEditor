@@ -240,25 +240,33 @@ const czmlSchemaTypeKeymap = {
     ],
   },
   'PixelOffset.json': {
-    type: 'object',
-    properties: {
-      "cartesian2": {
-        type: 'array',
-        items: [
-          {
-            type: "number",
-            description: " offsetX ",
-            default: 0
-          },
-          {
-            "type": "number",
-            description: " offsetY",
-            default: 0
-          }
-        ],
-        additionalItems: false
+    oneOf: [
+      {
+        type: 'null',
+        title: 'undefined',
       },
-    },
+      {
+        type: 'object',
+        properties: {
+          "cartesian2": {
+            type: 'array',
+            items: [
+              {
+                type: "number",
+                description: " offsetX ",
+                default: 0
+              },
+              {
+                "type": "number",
+                description: " offsetY",
+                default: 0
+              }
+            ],
+            additionalItems: false
+          },
+        },
+      }
+    ]
   },
   'AlignedAxis.json': {
     oneOf: [
@@ -299,31 +307,40 @@ const czmlSchemaTypeKeymap = {
     ]
   },
   'EyeOffset.json': {
-    type: 'object',
-    properties: {
-      "cartesian": {
-        type: 'array',
-        items: [
-          {
-            type: "number",
-            description: " offsetX",
-            default: 0
-          },
-          {
-            "type": "number",
-            description: " offsetY",
-            default: 0
-          },
-          {
-            "type": "number",
-            description: " offsetZ",
-            default: 0
-          }
-        ],
-        additionalItems: false
+
+    oneOf: [
+      {
+        type: 'null',
+        title: 'undefined',
       },
-      default: [0.0, 0.0, 0.0]
-    },
+      {
+        type: 'object',
+        properties: {
+          "cartesian": {
+            type: 'array',
+            items: [
+              {
+                type: "number",
+                description: " offsetX",
+                default: 0
+              },
+              {
+                "type": "number",
+                description: " offsetY",
+                default: 0
+              },
+              {
+                "type": "number",
+                description: " offsetZ",
+                default: 0
+              }
+            ],
+            additionalItems: false
+          },
+          default: [0.0, 0.0, 0.0]
+        },
+
+      }]
   },
   'NearFarScalar.json': {
     oneOf: [
@@ -369,7 +386,12 @@ const czmlSchemaTypeKeymap = {
   },
 
   'Color.json': {
-    oneOf: [
+    // oneOf 存在很多问题 先简化成 rgba 格式
+    "oneOf": [
+      {
+        "type": "null",
+        "title": "undefined"
+      },
       {
         "type": "object",
         "description": "A color.",
@@ -391,39 +413,8 @@ const czmlSchemaTypeKeymap = {
         "required": ["rgba"],
         default: {
           rgba: [255, 255, 255, 128]
-        }
+        },
       },
-      // {
-      //   "type": "object",
-      //   "description": "A color. The color can optionally vary over time.",
-      //   "properties": {
-      //     "rgba": {
-      //       "type": "array",
-      //       "items": {
-      //         "type": "object",
-      //         properties: {
-      //           interval: {
-      //             type: 'string',
-      //             default: '2019-01-01T00:00:00Z/2019-01-01T00:00:00Z',
-      //           },
-      //           rgba: {
-      //             "type": "array",
-      //             "items": { "type": "integer", "minimum": 0, "maximum": 255 },
-      //             "minItems": 4,
-      //             "maxItems": 4,
-      //             "title": "RGBA Color",
-      //             default: [255, 0, 0, 126],
-      //           }
-
-
-      //         },
-      //         default: [255, 0, 0, 126],
-      //       }
-      //     }
-      //   },
-      //   "title": "RGBA Color 0~255 change with time",
-      //   "required": ["rgba"]
-      // },
       {
         "type": "object",
         "description": "A color. The color can optionally vary over time.",
@@ -443,6 +434,80 @@ const czmlSchemaTypeKeymap = {
         }
       }
     ]
+    // oneOf: [
+    //   {
+    //     "type": "object",
+    //     "description": "A color.",
+    //     "properties": {
+    //       "rgba": {
+    //         "type": "array",
+    //         "items": {
+    //           "type": "number",
+    //           "minimum": 0,
+    //           "maximum": 255,
+    //           "default": 0
+    //         },
+    //         "minItems": 4,
+    //         "maxItems": 4,
+    //         "title": "RGBAF Color"
+    //       }
+    //     },
+    //     "title": "RGBA Color 0~255",
+    //     "required": ["rgba"],
+    //     default: {
+    //       rgba: [255, 255, 255, 128]
+    //     }
+    //   },
+    //   {
+    //     "type": "object",
+    //     "description": "A color. The color can optionally vary over time.",
+    //     "properties": {
+    //       "rgba": {
+    //         "type": "array",
+    //         "items": {
+    //           "type": "object",
+    //           properties: {
+    //             interval: {
+    //               type: 'string',
+    //               default: '2019-01-01T00:00:00Z/2019-01-01T00:00:00Z',
+    //             },
+    //             rgba: {
+    //               "type": "array",
+    //               "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+    //               "minItems": 4,
+    //               "maxItems": 4,
+    //               "title": "RGBA Color",
+    //               default: [255, 0, 0, 126],
+    //             }
+
+
+    //           },
+    //           default: [255, 0, 0, 126],
+    //         }
+    //       }
+    //     },
+    //     "title": "RGBA Color 0~255 change with time",
+    //     "required": ["rgba"]
+    //   },
+    //   {
+    //     "type": "object",
+    //     "description": "A color. The color can optionally vary over time.",
+    //     "properties": {
+    //       "rgbaf": {
+    //         "type": "array",
+    //         "items": { "type": "number", "minimum": 0, "maximum": 1 },
+    //         "minItems": 4,
+    //         "maxItems": 4,
+    //         "title": "RGBAF Color",
+    //       }
+    //     },
+    //     "title": "RGBAF Color 0~1",
+    //     "required": ["rgbaf"],
+    //     default: {
+    //       rgbaf: [1.0, 0.0, 0.0, 0.5],
+    //     }
+    //   }
+    // ]
   },
   'ColorBlendMode.json': {
     type: 'object',
@@ -631,8 +696,57 @@ const czmlSchemaTypeKeymap = {
       }
     ]
   },
+  "Repeat.json": {
+    oneOf: [
+      {
+        type: "null",
+        title: "Undefined"
+      },
+      {
+        "type": "object",
+        "properties": {
+          cartersian2: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            default: [1.0, 1.0],
+            additionalItems: false,
+          }
+        },
+      }
+    ]
+  },
+  "ImageMaterial.json": {
+    "type": "object",
+    "properties": {
+      "image": {
+        "$ref": "#/definitions/Uri.json",
+        "description": "The image to display on the surface of the polygon.",
+      },
+      "repeat": {
+        "$ref": "#/definitions/Repeat.json",
+        "description": "The number of times the image repeats in each direction.",
+      },
+      "color": {
+        "$ref": "#/definitions/Color.json",
+        "description": "A color that blends with the image.",
+      },
+      "transparent": {
+        "type": "boolean",
+        "description": "Whether the image has transparency. If true, an alpha texture is generated and the alpha channel of the image is ignored. If false, no alpha texture is generated and the alpha channel of the image is used.",
+        "default": false
+      }
+    },
+  },
   'Material.json': {
     "oneOf": [
+      {
+        type: "null",
+        title: "未设置"
+      },
       {
         "type": "object",
         "title": "Solid Color",
@@ -653,14 +767,18 @@ const czmlSchemaTypeKeymap = {
       //   "type": "null",
       //   "title": "未设置",
       // },
-      // {
-      //   "type": "object",
-      //   "title": "Image",
-      //   "properties": {
-      //     "url": { "type": "string" }
-      //   },
-      //   "required": ["url"]
-      // },
+      {
+        "type": "object",
+        "title": "Image",
+        "properties": {
+          "image": {
+            "type": "object",
+            "$ref": "#/definitions/ImageMaterial.json",
+          }
+          // "$ref": "#/definitions/Uri.json"
+        },
+        // "required": ["url"]
+      },
       // {
       //   "type": "object",
       //   "title": "Grid",
@@ -724,14 +842,13 @@ const czmlSchemaTypeKeymap = {
             "type": "object",
             "properties": {
               "color": {
-                "type": "object",
                 "$ref": "#/definitions/Color.json",
               },
             },
-          },
+          }
         },
-        "required": ["solidColor"],
-        additionalProperties: false
+        required: ['solidColor'],
+        additionalProperties: false,
       },
       {
         "type": "object",
@@ -765,6 +882,14 @@ const czmlSchemaTypeKeymap = {
         format: 'uri',
         title: 'Uri or dataUri',
         default: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABMlBMVEX////////7+e7z7tbr4s708qbi1p/ez4vSvIP////Ir2bBoWLGq2XSvmvi13LFqGTe0XDNsmfPuWm9nGHs5oDaym/Yx27Vv5y/n2H079/VwmzQuZDp4nbl2nT//vvcz3DWxGzv6o7t6HjQu2rf03HDpGPv7HrbzHDPtmj69+/v6cHfzrXTvJj8+/f9+/X38+37+uz28ur6+OX28eH59tbw6dbz7dXu5s3w6rnv6rLZxp7j1pnSupPl3I3byo3h1nvm3XXKr2f7+d328tjw6cjr4cjp3r7dzLDg0K/s5afp4KbZxqbf0KHw7JncypXdz4vt6InUv4ff0YPOtYLr43nTvnf7+vL18tD498r18cfr4bvm27LbyanPt5jVv5Ln3oTez4PXw4LRvH7ZyHrEqHbKsnALRXLGAAAACXRSTlO/n7+/v7+/v78Ov8gXAAABoUlEQVQ4y33TaXvBQBAAYL3bSEIQRZMg7rTum6Koq64qet/H//8L3SukQefTzuyb58nuzhi2DNrYOdjf1uZw+2gZ6bLHxTBPUU3JoAGJK94OgM8yb68Dt0V3iIAw99nSA6lQM2sARU2yf8DDG8siMM49MgjQplfnAmS8FyICN5egFBlgEDCWkgg0hoKAQE2RyGFGGDgc/TgAgiDLAPgLmtNlJwhYrWcAzEK8KAu9BN6SCGlNjSAcENjMYdNHitSVr6qTLLs0bbQeI8CYXnDtrsK7fNwgiZJY3bQA9DmsNIasGQI60I+A1EnpgU0UWQDq4Pc6a4HXz/NmO8dZuMCpHpwgwHq4uo932znjJmC3WOkg6/oPOCjZvxHYlqCzFmQqKijFVwEKZQ5BOY2SiA6gkLqUt0nWbRXMVIC/I6+Vq3IAoNcUCJDgFolUmbEsQKZCgLewbG8PBs9x1HL5n298zPc8fMUi68aAtByoRfMSuahp9t4mYjBy6gfnGl4UHRQQGOdAZTOA7b0KUj0Caop+9NRoViEoxrTDqxv/3cM93fj/As6JT9HgmLyYAAAAAElFTkSuQmCC",
+        examples: [
+          "hospital.png",
+          "location.png",
+          "school.png",
+          "camera.png",
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABMlBMVEX////////7+e7z7tbr4s708qbi1p/ez4vSvIP////Ir2bBoWLGq2XSvmvi13LFqGTe0XDNsmfPuWm9nGHs5oDaym/Yx27Vv5y/n2H079/VwmzQuZDp4nbl2nT//vvcz3DWxGzv6o7t6HjQu2rf03HDpGPv7HrbzHDPtmj69+/v6cHfzrXTvJj8+/f9+/X38+37+uz28ur6+OX28eH59tbw6dbz7dXu5s3w6rnv6rLZxp7j1pnSupPl3I3byo3h1nvm3XXKr2f7+d328tjw6cjr4cjp3r7dzLDg0K/s5afp4KbZxqbf0KHw7JncypXdz4vt6InUv4ff0YPOtYLr43nTvnf7+vL18tD498r18cfr4bvm27LbyanPt5jVv5Ln3oTez4PXw4LRvH7ZyHrEqHbKsnALRXLGAAAACXRSTlO/n7+/v7+/v78Ov8gXAAABoUlEQVQ4y33TaXvBQBAAYL3bSEIQRZMg7rTum6Koq64qet/H//8L3SukQefTzuyb58nuzhi2DNrYOdjf1uZw+2gZ6bLHxTBPUU3JoAGJK94OgM8yb68Dt0V3iIAw99nSA6lQM2sARU2yf8DDG8siMM49MgjQplfnAmS8FyICN5egFBlgEDCWkgg0hoKAQE2RyGFGGDgc/TgAgiDLAPgLmtNlJwhYrWcAzEK8KAu9BN6SCGlNjSAcENjMYdNHitSVr6qTLLs0bbQeI8CYXnDtrsK7fNwgiZJY3bQA9DmsNIasGQI60I+A1EnpgU0UWQDq4Pc6a4HXz/NmO8dZuMCpHpwgwHq4uo932znjJmC3WOkg6/oPOCjZvxHYlqCzFmQqKijFVwEKZQ5BOY2SiA6gkLqUt0nWbRXMVIC/I6+Vq3IAoNcUCJDgFolUmbEsQKZCgLewbG8PBs9x1HL5n298zPc8fMUi68aAtByoRfMSuahp9t4mYjBy6gfnGl4UHRQQGOdAZTOA7b0KUj0Caop+9NRoViEoxrTDqxv/3cM93fj/As6JT9HgmLyYAAAAAElFTkSuQmCC"
+        ]
+
       },
       {
         type: 'array',

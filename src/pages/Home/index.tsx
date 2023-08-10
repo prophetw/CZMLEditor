@@ -17,35 +17,25 @@ import CZMLPolyline from '../../../CZMLSchemaJSON/testFile/CesiumPolyline.json'
 import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.json'
 import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
+import { Select } from 'antd';
 
 
 
 const DEFAULT_KEY = 'billboard'
-const czml1 = CZMLBillboardAndLabel
-const czml2 = CZMLRectangle
-let czml = CZMLPoint
-// @ts-ignore
-czml = CZMLPolygon
-// @ts-ignore
-czml = CZMLPolylineDef
-// @ts-ignore
-czml = CZMLPolyline
-// @ts-ignore
-czml = CZMLPolylineRed
-// @ts-ignore
-czml = CZMLBillboardAndLabel
-// @ts-ignore
-czml = CZMLModel
-
-console.log(' Point ', CZMLPointTime);
-console.log(' polyline ', CZMLPolyline);
-console.log(' polygon ', CZMLPolygon);
-console.log(' billboard and label ----- ', czml1);
-console.log(' rectangle ----- ', czml2);
-console.log(' czml ----- ', JSON.stringify(czml, null, 2));
 
 // 用户导入了  czml 
 // 需要对 czml 进行解析 补充默认的字段
+const czmlDemoKeymap = {
+  model: CZMLModel,
+  billboard: CZMLBillboardAndLabel,
+  rectangle: CZMLRectangle,
+  point: CZMLPoint,
+  polygon: CZMLPolygon,
+  polyline: CZMLPolyline,
+  polylineRed: CZMLPolylineRed,
+  polylineDef: CZMLPolylineDef,
+  pointTime: CZMLPointTime,
+}
 
 
 
@@ -93,6 +83,7 @@ const HomePage: React.FC = () => {
   const [editKey, setEditKey] = useState(DEFAULT_KEY)
   const [formSchema, setFormSchema] = useState<any>(null)
   const [curEditPacket, setCurPacket] = useState<any>(null)
+  const [curDemoName, setCurDemoName] = useState('billboard')
 
   const setForm = (e) => {
     // console.log(e);
@@ -102,7 +93,7 @@ const HomePage: React.FC = () => {
       curEditPacket[editKey] = e.formData
       // console.log(' end billboard ', czml[1]);
       console.log(' end czml ', e.formData);
-      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+      const dataSourcePromise = Cesium.CzmlDataSource.load(packetAry);
       cesiumViewer.dataSources.add(dataSourcePromise);
       console.log(' cesium data sources ---- ', cesiumViewer.dataSources);
       // cesiumViewer.zoomTo(dataSourcePromise);
@@ -146,6 +137,9 @@ const HomePage: React.FC = () => {
       }
     });
     console.log(' viewer ', viewer);
+    // @ts-ignore
+    const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
+    console.log(' czml ', czml);
     const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
     viewer.dataSources.add(dataSourcePromise);
     viewer.zoomTo(dataSourcePromise);
@@ -160,9 +154,8 @@ const HomePage: React.FC = () => {
     }
   }, [])
 
-
   const togglePacket = () => {
-    console.log(czml);
+    console.log(packetAry);
     setExpandPacket(!expandPacket)
   }
 
@@ -233,7 +226,29 @@ const HomePage: React.FC = () => {
             <span onClick={togglePacket}>Packet 结构 展开/关闭</span>
             {packetAry && renderPacketSchema(packetAry)}
 
-
+            <Select style={{
+              position: 'absolute',
+              width: 200,
+              right: 0,
+              top: 0,
+            }} value={curDemoName} onChange={(value) => {
+              console.log(value);
+              setCurDemoName(value)
+              // @ts-ignore
+              const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[value]));
+              console.log(' new czml demo', czml);
+              setPacketAry(czml)
+              if (cesiumViewer) {
+                cesiumViewer.dataSources.removeAll()
+                const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+                cesiumViewer.dataSources.add(dataSourcePromise);
+                cesiumViewer.zoomTo(dataSourcePromise);
+              }
+            }}>
+              {Object.keys(czmlDemoKeymap).map((key) => {
+                return <Select.Option key={key} value={key}>{key}</Select.Option>
+              })}
+            </Select>
 
           </div>
           {formData && <Form

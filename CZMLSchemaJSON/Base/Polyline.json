@@ -45,10 +45,6 @@
                 }
             }
         },
-        "followSurface": {
-            "$ref": "Boolean.json",
-            "description": "Whether or not the positions are connected as great arcs (the default) or as straight lines. This property has been superseded by `arcType`, which should be used instead."
-        },
         "shadows": {
             "$ref": "ShadowMode.json",
             "description": "Whether or not the polyline casts or receives shadows."
