@@ -7,7 +7,7 @@ export default defineConfig({
   antd: {},
   access: {},
   hash: true,
-  target:{},
+  targets:{},
   model: {},
   initialState: {},
   request: {},
