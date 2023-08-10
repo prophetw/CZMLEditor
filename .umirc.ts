@@ -7,7 +7,7 @@ export default defineConfig({
   antd: {},
   access: {},
   hash: true,
-  targets:{},
+  jsMinifier: 'none',
   model: {},
   initialState: {},
   request: {},
