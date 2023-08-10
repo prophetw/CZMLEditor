@@ -25,5 +25,5 @@ jobs:
     - name: Build
       run: |
         npm install pnpm -g
-        pnpm install --no-frozen-lockfile
+        pnpm install
         pnpm build
