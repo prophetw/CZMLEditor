@@ -5,6 +5,11 @@
       height: 100%;
     }
   }
+  #thumbnailContainer{
+  .cesium-viewer-bottom{
+    display: none;
+  }
+  }
 }
 .container {
   padding-top: 80px;
@@ -12,8 +17,18 @@
 .flex{
   display: flex;
   height: 100%;
+  position: relative;
   > div{
     width: 50%;
+  }
+  .thumbnail_container{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    border: 1px solid white;
+    box-sizing: content-box;
   }
   .form_container{
     padding: 40px 10px;

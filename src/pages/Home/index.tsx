@@ -17,7 +17,7 @@ import CZMLPolyline from '../../../CZMLSchemaJSON/testFile/CesiumPolyline.json'
 import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.json'
 import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
-import { Select } from 'antd';
+import { Button, Select } from 'antd';
 
 
 
@@ -78,25 +78,28 @@ console.log(Cesium);
 const HomePage: React.FC = () => {
   const [formData, setFormData] = useState(null);
   const [cesiumViewer, setViewer] = useState<Cesium.Viewer | null>(null);
+  const [thumbnailViewer, setThumbViewer] = useState<Cesium.Viewer | null>(null);
   const [expandPacket, setExpandPacket] = useState(false)
   const [packetAry, setPacketAry] = useState<any>(null)
   const [editKey, setEditKey] = useState(DEFAULT_KEY)
   const [formSchema, setFormSchema] = useState<any>(null)
   const [curEditPacket, setCurPacket] = useState<any>(null)
   const [curDemoName, setCurDemoName] = useState('billboard')
+  const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
 
   const setForm = (e) => {
     // console.log(e);
     setFormData(e.formData)
+    curEditPacket[editKey] = e.formData
     if (cesiumViewer) {
-      cesiumViewer.dataSources.removeAll()
-      curEditPacket[editKey] = e.formData
-      // console.log(' end billboard ', czml[1]);
-      console.log(' end czml ', e.formData);
       const dataSourcePromise = Cesium.CzmlDataSource.load(packetAry);
+      cesiumViewer.dataSources.removeAll()
       cesiumViewer.dataSources.add(dataSourcePromise);
-      console.log(' cesium data sources ---- ', cesiumViewer.dataSources);
-      // cesiumViewer.zoomTo(dataSourcePromise);
+    }
+    if (thumbnailViewer) {
+      const dataSourcePromise = Cesium.CzmlDataSource.load(packetAry);
+      thumbnailViewer.dataSources.removeAll()
+      thumbnailViewer.dataSources.add(dataSourcePromise);
     }
   }
 
@@ -109,6 +112,20 @@ const HomePage: React.FC = () => {
       item.expand = false
     })
     return cloneObj
+  }
+
+  const getThumbnail = () => {
+    if (thumbnailViewer) {
+      // const dataSourcePromise = Cesium.CzmlDataSource.load(packetArray);
+      // thumbnailViewer.dataSources.removeAll()
+      // thumbnailViewer.dataSources.add(dataSourcePromise);
+      // thumbnailViewer.zoomTo(dataSourcePromise)
+      // thumbnailViewer.scene.screenSpaceCameraController.enableRotate = false;
+      console.log(thumbnailViewer);
+      const thumbnail = thumbnailViewer.scene.canvas.toDataURL()
+      console.log(' thumbnail is ', thumbnail);
+      setThumbnailDataUrl(thumbnail)
+    }
   }
 
   const initSchema = (editKey: string) => {
@@ -133,23 +150,63 @@ const HomePage: React.FC = () => {
       contextOptions: {
         webgl: {
           preserveDrawingBuffer: true,
+          alpha: true,
         },
       }
     });
+    const thumbView = new Cesium.Viewer("thumbnailContainer", {
+      baseLayerPicker: false, // 移除基础图层选择器
+      baseLayer: false,
+      geocoder: false, // 移除地理编码器
+      homeButton: false, // 移除主页按钮
+      sceneModePicker: false, // 移除场景模式选择器
+      timeline: false, // 移除时间轴
+      navigationHelpButton: false, // 移除帮助按钮
+      animation: false, // 移除动画控件
+      fullscreenButton: false, // 移除全屏按钮
+      vrButton: false, // 移除VR按钮
+      skyAtmosphere: false, // 移除大气效果
+      skyBox: false, // 移除天空盒
+      terrainProvider: new Cesium.EllipsoidTerrainProvider(), // 移除地形
+      contextOptions: {
+        webgl: {
+          preserveDrawingBuffer: true,
+          alpha: true,
+        },
+      }
+    });
+    thumbView.scene.globe = undefined; // 移除地球球体
+    thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
+
     console.log(' viewer ', viewer);
     // @ts-ignore
     const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
     console.log(' czml ', czml);
-    const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-    viewer.dataSources.add(dataSourcePromise);
-    viewer.zoomTo(dataSourcePromise);
+
+    if (viewer) {
+      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+      viewer.dataSources.add(dataSourcePromise);
+      viewer.zoomTo(dataSourcePromise);
+    }
+
+    if (thumbView) {
+      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+      thumbView.dataSources.add(dataSourcePromise);
+      thumbView.zoomTo(dataSourcePromise);
+    }
+
     setViewer(viewer);
+    setThumbViewer(thumbView)
     setPacketAry(czml)
     return () => {
       // viewer.dataSources.remove(dataSourcePromise);
       const container = document.getElementById('cesiumContainer')
+      const container2 = document.getElementById('thumbnailContainer')
       if (container) {
         container.innerHTML = ''
+      }
+      if (container2) {
+        container2.innerHTML = ''
       }
     }
   }, [])
@@ -157,6 +214,7 @@ const HomePage: React.FC = () => {
   const togglePacket = () => {
     console.log(packetAry);
     setExpandPacket(!expandPacket)
+    getThumbnail()
   }
 
   const expandPacketItem = (item) => {
@@ -244,6 +302,12 @@ const HomePage: React.FC = () => {
                 cesiumViewer.dataSources.add(dataSourcePromise);
                 cesiumViewer.zoomTo(dataSourcePromise);
               }
+              if (thumbnailViewer) {
+                thumbnailViewer.dataSources.removeAll()
+                const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+                thumbnailViewer.dataSources.add(dataSourcePromise);
+                thumbnailViewer.zoomTo(dataSourcePromise);
+              }
             }}>
               {Object.keys(czmlDemoKeymap).map((key) => {
                 return <Select.Option key={key} value={key}>{key}</Select.Option>
@@ -258,11 +322,25 @@ const HomePage: React.FC = () => {
             validator={validator}
             uiSchema={uiSchema}
             experimental_defaultFormStateBehavior={{
-              emptyObjectFields: 'skipDefaults',
+              // emptyObjectFields: 'populateRequiredDefaults',
             }}
           />}
         </div>
-
+        <div id="thumbnailContainer" className={styles.thumbnail_container}>
+        </div>
+        <div style={{
+          position: "absolute",
+          bottom: 0,
+          right: '50%',
+          height: "200px",
+          width: "200px",
+          background: "white"
+        }}>
+          <Button onClick={() => {
+            getThumbnail()
+          }}>getThumbnail</Button>
+          <img style={{border: "1px solid #666"}} src={thumbnailDataUrl} alt="" />
+        </div>
       </div>
 
     </>

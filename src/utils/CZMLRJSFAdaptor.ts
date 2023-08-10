@@ -54,7 +54,11 @@ const czmlSchemaTypeKeymap = {
   },
   'Font.json': {
     type: 'string',
-
+    examples: [
+      "10pt sans-serif",
+      "12pt Lucida Console",
+      "bold italic 20px Georgia"
+    ]
   },
   'BackgroundPadding.json': {
     type: 'object',
@@ -741,6 +745,12 @@ const czmlSchemaTypeKeymap = {
       }
     },
   },
+  "StripeOrientation.json": {
+    "type": "string",
+    "enum": ["HORIZONTAL", "VERTICAL"],
+    "enumNames": ["水平", "垂直"],
+    "default": "HORIZONTAL"
+  },
   'Material.json': {
     "oneOf": [
       {
@@ -763,10 +773,6 @@ const czmlSchemaTypeKeymap = {
         required: ['solidColor'],
         additionalProperties: false,
       },
-      // {
-      //   "type": "null",
-      //   "title": "未设置",
-      // },
       {
         "type": "object",
         "title": "Image",
@@ -775,34 +781,100 @@ const czmlSchemaTypeKeymap = {
             "type": "object",
             "$ref": "#/definitions/ImageMaterial.json",
           }
-          // "$ref": "#/definitions/Uri.json"
         },
-        // "required": ["url"]
       },
-      // {
-      //   "type": "object",
-      //   "title": "Grid",
-      //   "properties": {
-      //     "color": { "type": "string" },
-      //     "cellAlpha": { "type": "number", default: 1.0 },
-      //     "lineCount": { "type": "number" },
-      //     "lineThickness": { "type": "number" },
-      //     "lineOffset": { "type": "number" }
-      //   },
-      //   "required": ["color", "cellAlpha", "lineCount", "lineThickness", "lineOffset"]
-      // },
-      // {
-      //   "type": "object",
-      //   "title": "Stripe",
-      //   "properties": {
-      //     "orientation": { "type": "string" },
-      //     "evenColor": { "type": "string" },
-      //     "oddColor": { "type": "string" },
-      //     "offset": { "type": "number" },
-      //     "repeat": { "type": "number" }
-      //   },
-      //   "required": ["orientation", "evenColor", "oddColor", "offset", "repeat"]
-      // },
+      {
+        "type": "object",
+        "title": "Grid",
+        "properties": {
+          "grid": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the surface.",
+                default: {
+                  rgba: [255, 255, 255, 255],
+                }
+              },
+              "cellAlpha": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The alpha value for the space between grid lines. This will be combined with the color alpha.",
+                "default": 0.1
+              },
+              "lineCount": {
+                "$ref": "#/definitions/Repeat.json",
+                "description": "The number of grid lines along each axis.",
+              },
+              "lineThickness": {
+                "$ref": "#/definitions/Repeat.json",
+                "description": "The thickness of grid lines along each axis, in pixels.",
+              },
+              "lineOffset": {
+                "$ref": "#/definitions/Repeat.json",
+                "description": "The offset of grid lines along each axis, as a percentage from 0 to 1.",
+              }
+            }
+
+          }
+        },
+      },
+      {
+        "type": "object",
+        "title": "Stripe",
+        "properties": {
+          "stripe": {
+            "type": "object",
+            "properties": {
+              "orientation": {
+                "$ref": "#/definitions/StripeOrientation.json",
+                "description": "The value indicating if the stripes are horizontal or vertical.",
+                "default": "HORIZONTAL"
+              },
+              "evenColor": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the even stripes.",
+                default: {
+                  rgba: [255, 255, 255, 255],
+                }
+              },
+              "oddColor": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the odd stripes.",
+                default: {
+                  rgba: [0, 0, 0, 255],
+                }
+              },
+              "offset": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The offset of the stripe pattern.",
+                "default": 0.0
+              },
+              "repeat": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The number of times the stripes repeat.",
+                "default": 10.0
+              }
+            }
+          },
+          required: ['offset', 'repeat', 'evenColor', 'oddColor', 'orientation'],
+        },
+        default: {
+          stripe: {
+            orientation: "HORIZONTAL",
+            evenColor: {
+              rgba: [255, 255, 255, 255],
+            },
+            oddColor: {
+              rgba: [0, 0, 0, 255],
+            },
+            offset: 0.0,
+            repeat: 10.0,
+          }
+        },
+        "required": ['stripe'],
+        additionalProperties: false,
+      },
       {
         "type": "object",
         "title": "Checkerboard",
@@ -852,6 +924,88 @@ const czmlSchemaTypeKeymap = {
       },
       {
         "type": "object",
+        "title": "PolylineArrow",
+        "properties": {
+          "polylineArrow": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the line.",
+                default: {
+                  rgba: [255, 255, 255, 255],
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "object",
+        "title": "PolylineGlow",
+        "properties": {
+          "polylineGlow": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the line.",
+                default: {
+                  rgba: [255, 255, 255, 255],
+                }
+              },
+              "glowPower": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The strength of the glow, as a percentage of the total line width.",
+                "default": 0.25
+              },
+              "taperPower": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The strength of the tapering effect, as a percentage of the total line length.",
+                "default": 1.0
+              }
+            }
+          }
+        },
+        required: ['polylineGlow'],
+      },
+      {
+        "type": "object",
+        "title": "PolylineDash",
+        "properties": {
+          "polylineDash": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the line.",
+                default: {
+                  rgba: [255, 255, 255, 255],
+                }
+              },
+              "dashLength": {
+                "$ref": "#/definitions/Double.json",
+                "description": "The length of the dash pattern.",
+                "default": 16.0
+              },
+              "dashPattern": {
+                "$ref": "#/definitions/Double.json",
+                "description": "A 16-bit bitfield representing which portions along a single dashLength are the dash (1) and which are the gap (0). The default value, 255 (0000000011111111), indicates 50% gap followed by 50% dash. in console 0b0000000011111111",
+                "default": 255
+              },
+              "gapColor": {
+                "$ref": "#/definitions/Color.json",
+                "description": "The color of the gaps in the line.",
+                default: {
+                  rgba: [0, 0, 0, 0],
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "object",
         "title": "Checkerboard",
         "properties": {
           "checkerboard": {
@@ -889,7 +1043,6 @@ const czmlSchemaTypeKeymap = {
           "camera.png",
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABMlBMVEX////////7+e7z7tbr4s708qbi1p/ez4vSvIP////Ir2bBoWLGq2XSvmvi13LFqGTe0XDNsmfPuWm9nGHs5oDaym/Yx27Vv5y/n2H079/VwmzQuZDp4nbl2nT//vvcz3DWxGzv6o7t6HjQu2rf03HDpGPv7HrbzHDPtmj69+/v6cHfzrXTvJj8+/f9+/X38+37+uz28ur6+OX28eH59tbw6dbz7dXu5s3w6rnv6rLZxp7j1pnSupPl3I3byo3h1nvm3XXKr2f7+d328tjw6cjr4cjp3r7dzLDg0K/s5afp4KbZxqbf0KHw7JncypXdz4vt6InUv4ff0YPOtYLr43nTvnf7+vL18tD498r18cfr4bvm27LbyanPt5jVv5Ln3oTez4PXw4LRvH7ZyHrEqHbKsnALRXLGAAAACXRSTlO/n7+/v7+/v78Ov8gXAAABoUlEQVQ4y33TaXvBQBAAYL3bSEIQRZMg7rTum6Koq64qet/H//8L3SukQefTzuyb58nuzhi2DNrYOdjf1uZw+2gZ6bLHxTBPUU3JoAGJK94OgM8yb68Dt0V3iIAw99nSA6lQM2sARU2yf8DDG8siMM49MgjQplfnAmS8FyICN5egFBlgEDCWkgg0hoKAQE2RyGFGGDgc/TgAgiDLAPgLmtNlJwhYrWcAzEK8KAu9BN6SCGlNjSAcENjMYdNHitSVr6qTLLs0bbQeI8CYXnDtrsK7fNwgiZJY3bQA9DmsNIasGQI60I+A1EnpgU0UWQDq4Pc6a4HXz/NmO8dZuMCpHpwgwHq4uo932znjJmC3WOkg6/oPOCjZvxHYlqCzFmQqKijFVwEKZQ5BOY2SiA6gkLqUt0nWbRXMVIC/I6+Vq3IAoNcUCJDgFolUmbEsQKZCgLewbG8PBs9x1HL5n298zPc8fMUi68aAtByoRfMSuahp9t4mYjBy6gfnGl4UHRQQGOdAZTOA7b0KUj0Caop+9NRoViEoxrTDqxv/3cM93fj/As6JT9HgmLyYAAAAAElFTkSuQmCC"
         ]
-
       },
       {
         type: 'array',
