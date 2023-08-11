@@ -6,6 +6,7 @@ const cesiumSource = path.resolve('./node_modules/cesium/Build/Cesium/')
 export default defineConfig({
   antd: {},
   access: {},
+  publicPath: './',
   hash: true,
   jsMinifier: 'none',
   model: {},
