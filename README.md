@@ -1,5 +1,4 @@
 ## [czml-writer](https://github.com/AnalyticalGraphicsInc/czml-writer/tree/main)
-> use  czml schema  with 
 
 ## [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form)
 

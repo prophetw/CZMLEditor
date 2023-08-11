@@ -27,3 +27,24 @@ jobs:
         npm install pnpm -g
         pnpm install --no-frozen-lockfile
         pnpm build
+
+  deploy_gh_pages:
+
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    name: Deploy czmlEditor to GitHub Pages
+    needs: [build]
+    steps:
+      - name: Download built playground
+        uses: actions/download-artifact@v3
+        with:
+          name: playground
+          path: dist
+      - name: Deploy czmlEditor to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          keep_history: true
+          target_branch: gh-pages
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
