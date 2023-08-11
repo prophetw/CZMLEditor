@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
 
   const setForm = (e) => {
-    // console.log(e);
+    console.log(' curFormData ---- ', e.formData);
     setFormData(e.formData)
     curEditPacket[editKey] = e.formData
     if (cesiumViewer) {

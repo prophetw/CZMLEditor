@@ -1,6 +1,7 @@
 import { RJSFSchema } from '@rjsf/utils';
 import BillboardJSONSchema from '../../CZMLSchemaJSON/Base/Billboard.json'
 import LabelJSONSchema from '../../CZMLSchemaJSON/Base/Label.json'
+import ClockJSONSchema from '../../CZMLSchemaJSON/Base/Clock.json'
 import PolygonJSONSchema from '../../CZMLSchemaJSON/Base/Polygon.json'
 import PolylineJSONSchema from '../../CZMLSchemaJSON/Base/Polyline.json'
 import RectangleJSONSchema from '../../CZMLSchemaJSON/Base/Rectangle.json'
@@ -16,6 +17,7 @@ const BaseJSONSchemaObj = {
   point: PointJSONSchema,
   packet: PacketJSONSchema,
   model: ModelJSONSchema,
+  clock: ClockJSONSchema,
   rectangle: RectangleJSONSchema,
 }
 
@@ -32,6 +34,7 @@ const editableKeysInPacketSchema = [
   "polyline",
   "point",
   "rectangle",
+  "clock",
   "model"
 ]
 
@@ -59,6 +62,28 @@ const czmlSchemaTypeKeymap = {
       "12pt Lucida Console",
       "bold italic 20px Georgia"
     ]
+  },
+  "IntervalTimeValue.json": {
+    type: 'string',
+    description: "startISOTime/endISOTime 2023-01-01T00:00:00Z/2023-01-01T00:10:00Z",
+    default: "",
+  },
+  "Values_TimeValue.json": {
+    type: 'string',
+    format: 'date-time',
+    default: '2019-01-01T00:00:00Z',
+  },
+  "Values_ClockRangeValue.json": {
+    type: 'string',
+    enum: ['LOOP_STOP', 'UNBOUNDED', 'CLAMPED'],
+    enumNames: ['循环停止', '无限循环', '限制循环'],
+    default: 'LOOP_STOP',
+  },
+  "Values_ClockStepValue.json": {
+    type: 'string',
+    enum: ['SYSTEM_CLOCK', 'SYSTEM_CLOCK_MULTIPLIER', 'TICK_DEPENDENT'],
+    enumNames: ['系统时钟', '系统时钟乘数', '依赖于时钟'],
+    default: 'SYSTEM_CLOCK',
   },
   'BackgroundPadding.json': {
     type: 'object',
@@ -1184,12 +1209,15 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
 
         // element.type = 'string';
         // adjust type from pre keymap 
-        const ref = element['#ref']; //  replace #ref => rsjf definitions
+        let ref = element['#ref']; //  replace #ref => rsjf definitions
         // in czml ref is like  Color.json 
         // in rsjf ref is like  #/definitions/Color.json 
 
 
 
+        if(ref && ref.indexOf('/')>-1){
+          ref = ref.replace('/','_');
+        }
 
         if (czmlSchemaTypeKeymap[ref] !== undefined) {
           element['$ref'] = `#/definitions/${ref}`;
