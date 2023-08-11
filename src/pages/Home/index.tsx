@@ -37,41 +37,7 @@ const czmlDemoKeymap = {
 
 
 
-const uiSchema = {
-  // outlineColor: {
-  //   'ui:widget': 'color',
-  // },
-  // fillColor: {
-  //   'ui:widget': 'color',
-  // },
-  // backgroundColor: {
-  //   'ui:widget': 'color',
-  // },
-  // image: {
-  // 'ui:widget': 'uri',
-  // },
-  // "material": {
-  //   "solidColor": {
-  //     "color": {
-  //       "ui:widget": "color"
-  //     }
-  //   },
-  //   "color": {
-  //     "ui:widget": "color"
-  //   },
-  //   "evenColor": {
-  //     "ui:widget": "color"
-  //   },
-  //   "oddColor": {
-  //     "ui:widget": "color"
-  //   }
-  // }
-
-}
-
-// const formDataTem = czml[1].label
-
-console.log(Cesium);
+const uiSchema = {}
 
 const HomePage: React.FC = () => {
   const [formData, setFormData] = useState(null);
