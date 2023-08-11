@@ -8,6 +8,9 @@ export default defineConfig({
   access: {},
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   hash: true,
+  history: {
+    type: 'hash',
+  },
   jsMinifier: 'none',
   model: {},
   initialState: {},
