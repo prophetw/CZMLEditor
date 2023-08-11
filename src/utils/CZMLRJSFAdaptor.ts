@@ -67,6 +67,7 @@ const czmlSchemaTypeKeymap = {
     type: 'string',
     description: "startISOTime/endISOTime 2023-01-01T00:00:00Z/2023-01-01T00:10:00Z",
     default: "",
+    format: 'double_date_time_picker'
   },
   "Values_TimeValue.json": {
     type: 'string',

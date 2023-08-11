@@ -17,6 +17,11 @@
             "type": "number",
             "default": 1.0
         },
+        "interval": {
+            "$ref": "IntervalTimeValue.json",
+            "type": "string",
+            "description": "startISOTime/endISOTime 2023-01-01T00:00:00Z/2023-01-01T00:10:00Z"
+        },
         "range": {
             "$ref": "Values/ClockRangeValue.json",
             "description": "The behavior when the current time reaches its start or end times.",

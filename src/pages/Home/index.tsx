@@ -18,6 +18,7 @@ import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.
 import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 import { Button, Select } from 'antd';
+import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
 
 
 
@@ -36,8 +37,12 @@ const czmlDemoKeymap = {
 }
 
 
-
-const uiSchema = {}
+const widgets = {
+  double_date_time_picker: DoubleDateTimePicker 
+}
+const uiSchema = {
+  'ui:widget': 'double_date_time_picker'
+}
 
 const HomePage: React.FC = () => {
   const [formData, setFormData] = useState(null);
@@ -279,10 +284,12 @@ const HomePage: React.FC = () => {
             </Select>
 
           </div>
-          {formData && <Form
+          {formData && 
+          <Form
             formData={formData}
             onChange={(e) => setForm(e)}
             schema={formSchema}
+            widgets={widgets}
             validator={validator}
             uiSchema={uiSchema}
             experimental_defaultFormStateBehavior={{
@@ -304,6 +311,8 @@ const HomePage: React.FC = () => {
             getThumbnail()
           }}>getThumbnail</Button>
           <img style={{border: "1px solid #666"}} src={thumbnailDataUrl} alt="" />
+
+          <DoubleDateTimePicker /> 
         </div>
       </div>
 
