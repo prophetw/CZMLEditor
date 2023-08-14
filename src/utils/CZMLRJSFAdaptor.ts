@@ -466,6 +466,7 @@ const czmlSchemaTypeKeymap = {
             },
             "minItems": 4,
             "maxItems": 4,
+            format: 'color_rgba',
             "title": "RGBA Color"
           }
         },
@@ -484,6 +485,7 @@ const czmlSchemaTypeKeymap = {
             "items": { "type": "number", "minimum": 0, "maximum": 1 },
             "minItems": 4,
             "maxItems": 4,
+            format: 'color_rgbaf',
             "title": "RGBAF Color",
           }
         },

@@ -21,6 +21,8 @@ import { Button, Select } from 'antd';
 import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
 import Cartesian3Value from '@/RJSFCustom/Cartesian3Value';
 import CartographicDegreesValue from '@/RJSFCustom/CartographicDegreesValue';
+import ColorPickerRGBA from '@/RJSFCustom/ColorPickerRGBA';
+import ColorPickerRGBAF from '@/RJSFCustom/ColorPickerRGBAF';
 
 
 
@@ -42,7 +44,9 @@ const czmlDemoKeymap = {
 const widgets = { // custom format name => custom widget component 
   double_date_time_picker: DoubleDateTimePicker,
   cartesian3_value: Cartesian3Value,
-  cartographicDegree_value: CartographicDegreesValue
+  cartographicDegree_value: CartographicDegreesValue,
+  color_rgba: ColorPickerRGBA,
+  color_rgbaf: ColorPickerRGBAF
 }
 
 const uiSchema = {
@@ -54,7 +58,39 @@ const uiSchema = {
   },
   cartographicDegrees: {
     'ui:widget': 'cartographicDegree_value',
-  }
+  },
+  backgroundColor: {
+    rgba: {
+      'ui:widget': 'color_rgba',
+    },
+    rgbaf: {
+      'ui:widget': 'color_rgbaf',
+    }
+  },
+  fillColor: {
+    rgba: {
+      'ui:widget': 'color_rgba',
+    },
+    rgbaf: {
+      'ui:widget': 'color_rgbaf',
+    }
+  },
+  outlineColor: {
+    rgba: {
+      'ui:widget': 'color_rgba',
+    },
+    rgbaf: {
+      'ui:widget': 'color_rgbaf',
+    }
+  },
+  color: {
+    rgba: {
+      'ui:widget': 'color_rgba',
+    },
+    rgbaf: {
+      'ui:widget': 'color_rgbaf',
+    }
+  },
 
 }
 
