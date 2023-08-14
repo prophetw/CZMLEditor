@@ -13,6 +13,7 @@ specifiers:
   antd: ^5.4.0
   cesium: ^1.108.0
   copy-webpack-plugin: ^11.0.0
+  dayjs: ^1.11.9
   husky: ^8.0.3
   lint-staged: ^13.2.0
   prettier: ^2.8.7
@@ -23,7 +24,7 @@ specifiers:
 dependencies:
   '@ant-design/icons': 5.2.4
   '@ant-design/pro-components': 2.6.10_antd@5.8.1
-  '@rjsf/antd': 5.11.2_fvaggjze2xi65eyzu5acm7aqmm
+  '@rjsf/antd': 5.11.2_l7hlhcz5zkzhtgbgkaupkoxnka
   '@rjsf/core': 5.11.2_@rjsf+utils@5.11.2
   '@rjsf/utils': 5.11.2
   '@rjsf/validator-ajv8': 5.11.2_@rjsf+utils@5.11.2
@@ -31,6 +32,7 @@ dependencies:
   antd: 5.8.1
   cesium: 1.108.0
   copy-webpack-plugin: 11.0.0
+  dayjs: 1.11.9
 
 devDependencies:
   '@types/react': 18.2.18
@@ -3179,7 +3181,7 @@ packages:
       rc-util: 5.35.0
     dev: false
 
-  /@rjsf/antd/5.11.2_fvaggjze2xi65eyzu5acm7aqmm:
+  /@rjsf/antd/5.11.2_l7hlhcz5zkzhtgbgkaupkoxnka:
     resolution: {integrity: sha512-XdtNxG8bkoKJ5fYLmCR3tR6AZ08RStMYh6fhiRL5MupTjIkK75QnxHTRrwJVfO2gpx8XQvP1t3hZOe2MolZ4YQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3195,6 +3197,7 @@ packages:
       '@rjsf/utils': 5.11.2
       antd: 5.8.1
       classnames: 2.3.2
+      dayjs: 1.11.9
       lodash: 4.17.21
       lodash-es: 4.17.21
       rc-picker: 2.7.2
