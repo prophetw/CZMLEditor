@@ -15,6 +15,7 @@
     "id": "point",
     "position": {
       "epoch": "2023-01-01T00:00:00Z",
+      "test": 1,
       "cartographicDegrees": [
         0,
         -70,

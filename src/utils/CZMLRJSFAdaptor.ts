@@ -8,6 +8,7 @@ import RectangleJSONSchema from '../../CZMLSchemaJSON/Base/Rectangle.json'
 import PointJSONSchema from '../../CZMLSchemaJSON/Base/Point.json'
 import ModelJSONSchema from '../../CZMLSchemaJSON/Base/Model.json'
 import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
+import PositionJSONSchema from '../../CZMLSchemaJSON/Base/Position.json'
 
 const BaseJSONSchemaObj = {
   billboard: BillboardJSONSchema,
@@ -19,6 +20,7 @@ const BaseJSONSchemaObj = {
   model: ModelJSONSchema,
   clock: ClockJSONSchema,
   rectangle: RectangleJSONSchema,
+  position: PositionJSONSchema,
 }
 
 const validPacketKeys = Object.keys(BaseJSONSchemaObj.packet.properties)
@@ -35,7 +37,8 @@ const editableKeysInPacketSchema = [
   "point",
   "rectangle",
   "clock",
-  "model"
+  "model",
+  "position"
 ]
 
 // console.log('validPacketKeys', validPacketKeys);
@@ -85,6 +88,33 @@ const czmlSchemaTypeKeymap = {
     enum: ['SYSTEM_CLOCK', 'SYSTEM_CLOCK_MULTIPLIER', 'TICK_DEPENDENT'],
     enumNames: ['系统时钟', '系统时钟乘数', '依赖于时钟'],
     default: 'SYSTEM_CLOCK',
+  },
+  "Values_Cartesian3Value.json": {
+    format: 'cartesian3_value',
+    "description": "A three-dimensional Cartesian value specified as `[X, Y, Z]`. If the array has three elements, the value is constant. If it has four or more elements, they are time-tagged samples arranged as `[Time, X, Y, Z, Time, X, Y, Z, ...]`, where Time is an ISO 8601 date and time string or seconds since epoch.",
+    type: 'array',
+    items: {
+      type: "string"
+    }
+    // [TimeISO, number, number, number,  TimeISO, number, number, number]
+    // or [number, number, number,   number, number, number]
+  },
+  "Values_CartographicRadiansValue.json": {
+    type: 'array',
+    format: 'cartographicRadians_value',
+    "description": "A geodetic, WGS84 position specified as `[Longitude, Latitude, Height]`, where Longitude and Latitude are in radians and Height is in meters. If the array has three elements, the value is constant. If it has four or more elements, they are time-tagged samples arranged as `[Time, Longitude, Latitude, Height, Time, Longitude, Latitude, Height, ...]`, where Time is an ISO 8601 date and time string or seconds since epoch.",
+    items: {
+      type: "number",
+    }
+    // format: 'Cartesian3_value',
+  },
+  "Values_CartographicDegreesValue.json": {
+    type: 'array',
+    format: 'cartographicDegree_value',
+    items: {
+      type: "number",
+    }
+    // format: 'Cartesian3_value',
   },
   'BackgroundPadding.json': {
     type: 'object',
@@ -159,32 +189,32 @@ const czmlSchemaTypeKeymap = {
       }
     ],
   },
-  'Position.json': {
-    type: 'Object',
-    properties: {
-      cartographicDegrees: {
-        type: 'array',
-        items: [
-          {
-            type: "number",
-            description: " X or Longitude",
-          },
-          {
-            "type": "number",
-            description: " Y or Latitude"
-          },
-          {
-            "type": "number",
-            description: " Z or Height"
-          }
-        ],
-        additionalItems: false
-      },
-      default: {
-        cartographicDegrees: [0, 0, 0]
-      }
-    },
-  },
+  // 'Position.json': {
+  //   type: 'Object',
+  //   properties: {
+  //     cartographicDegrees: {
+  //       type: 'array',
+  //       items: [
+  //         {
+  //           type: "number",
+  //           description: " X or Longitude",
+  //         },
+  //         {
+  //           "type": "number",
+  //           description: " Y or Latitude"
+  //         },
+  //         {
+  //           "type": "number",
+  //           description: " Z or Height"
+  //         }
+  //       ],
+  //       additionalItems: false
+  //     },
+  //     default: {
+  //       cartographicDegrees: [0, 0, 0]
+  //     }
+  //   },
+  // },
   'PositionListOfLists.json': {
     oneOf: [
       {
@@ -436,7 +466,7 @@ const czmlSchemaTypeKeymap = {
             },
             "minItems": 4,
             "maxItems": 4,
-            "title": "RGBAF Color"
+            "title": "RGBA Color"
           }
         },
         "title": "RGBA Color 0~255",
@@ -1216,8 +1246,8 @@ const CZML2RJSFAdaptor = (schemaObj: RJSFSchema) => {
 
 
 
-        if(ref && ref.indexOf('/')>-1){
-          ref = ref.replace('/','_');
+        if (ref && ref.indexOf('/') > -1) {
+          ref = ref.replace('/', '_');
         }
 
         if (czmlSchemaTypeKeymap[ref] !== undefined) {

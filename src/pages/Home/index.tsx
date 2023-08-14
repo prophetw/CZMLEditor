@@ -19,6 +19,8 @@ import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefi
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 import { Button, Select } from 'antd';
 import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
+import Cartesian3Value from '@/RJSFCustom/Cartesian3Value';
+import CartographicDegreesValue from '@/RJSFCustom/CartographicDegreesValue';
 
 
 
@@ -37,11 +39,23 @@ const czmlDemoKeymap = {
 }
 
 
-const widgets = {
-  double_date_time_picker: DoubleDateTimePicker 
+const widgets = { // custom format name => custom widget component 
+  double_date_time_picker: DoubleDateTimePicker,
+  cartesian3_value: Cartesian3Value,
+  cartographicDegree_value: CartographicDegreesValue
 }
+
 const uiSchema = {
-  'ui:widget': 'double_date_time_picker'
+  cartesian: {
+    'ui:widget': 'cartesian3_value',
+  },
+  interval: {
+    'ui:widget': 'double_date_time_picker',
+  },
+  cartographicDegrees: {
+    'ui:widget': 'cartographicDegree_value',
+  }
+
 }
 
 const HomePage: React.FC = () => {
@@ -199,6 +213,7 @@ const HomePage: React.FC = () => {
       initSchema(key);
       setCurPacket(item)
       console.log(' item key ', item, key);
+      console.log(' curForm ', item[key]);
       setFormData(item[key])
     })
   }
@@ -293,7 +308,8 @@ const HomePage: React.FC = () => {
             validator={validator}
             uiSchema={uiSchema}
             experimental_defaultFormStateBehavior={{
-              // emptyObjectFields: 'populateRequiredDefaults',
+              // emptyObjectFields: 'skipDefaults',
+              emptyObjectFields: 'populateRequiredDefaults',
             }}
           />}
         </div>

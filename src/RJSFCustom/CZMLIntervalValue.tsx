@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 dayjs().locale('zh-cn').format();
 
 function DoubleDateTimePicker(props) {
+	// TimeISO/TimeISO for interval
 	const value = props.value;
 	let start = null;
 	let end = null;

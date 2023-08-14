@@ -12,14 +12,12 @@
         { "$ref": "ValueProperties/Cartesian3VelocityValueProperty.json" },
         { "$ref": "ValueProperties/ReferenceValueProperty.json" }
     ],
-    "type": [
-        "array",
-        "object"
-    ],
-    "items": {
-        "$ref": "#"
-    },
+    "type": "object",
     "properties": {
+        "epoch": {
+            "$ref": "Values/TimeValue.json",
+            "description": "The current time, specified in ISO8601 format."
+        },
         "referenceFrame": {
             "description": "The reference frame in which cartesian positions are specified. Possible values are \"FIXED\" and \"INERTIAL\".",
             "type": "string",
