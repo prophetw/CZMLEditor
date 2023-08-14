@@ -59,7 +59,7 @@ function Cartesian3Value(props) {
 
 	const [enableTimeInput, setEnableTimeInput] = useState(valueVaryTime)
 	const [isUseEpoch, setUseEpoch] = useState(!!epoch);
-	const [valueAry, setValueAry] = useState(initValue || []);
+	const [valueAry, setValueAry] = useState(initValue || []); // [ item = [], item = [], item = [] ]
 
 	useEffect(() => {
 		const result = valueAry.flat()
@@ -76,9 +76,9 @@ function Cartesian3Value(props) {
 
 	const addNewItem = () => {
 		if (enableTimeInput) {
-			setValueAry([...valueAry, new dayjs(Date.now()), 0, 0, 0]);
+			setValueAry([...valueAry, [new dayjs(Date.now()), 0, 0, 0]]);
 		} else {
-			setValueAry([...valueAry, 0, 0, 0]);
+			setValueAry([...valueAry, [0, 0, 0]]);
 		}
 	}
 

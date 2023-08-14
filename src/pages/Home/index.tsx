@@ -91,6 +91,14 @@ const uiSchema = {
       'ui:widget': 'color_rgbaf',
     }
   },
+  silhouetteColor: {
+    rgba: {
+      'ui:widget': 'color_rgba',
+    },
+    rgbaf: {
+      'ui:widget': 'color_rgbaf',
+    }
+  }
 
 }
 
