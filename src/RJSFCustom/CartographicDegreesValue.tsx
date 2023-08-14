@@ -8,6 +8,13 @@ function CartographicDegreesValue(props) {
 	// TimeISO/TimeISO for interval
 	console.log(' props----props ', props);
 	const value = props.value;
+	const formContext = props.formContext;
+	const { formData } = formContext;
+	let epoch = null;
+	if (formData) {
+		epoch = formData.epoch;
+	}
+
 	let valueVaryTime = false;
 	if (value && value.length > 0) {
 		value.map((item, index) => {
@@ -16,18 +23,34 @@ function CartographicDegreesValue(props) {
 			}
 		})
 	}
+	if (!!epoch) {
+		valueVaryTime = true;
+	}
 
 	console.log(' ----- isValueVaryTime ---- ', valueVaryTime);
 	console.log(' ----- value ---- ', value);
 
 	let initValue = [];
 
+	// TODO: 
+	// epoch is set then user set null 
+	// should handle this case   value = [null, 0, 0, 0, null, 0, 0, 0]
+
 	if (valueVaryTime) {
-		value.map((item, index) => {
-			if (index % 4 === 0) {
-				initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
-			}
-		})
+		if (!!epoch) {
+			// if epoch is set then 
+			value.map((item, index) => {
+				if (index % 4 === 0) {
+					initValue.push([item, value[index + 1], value[index + 2], value[index + 3]]);
+				}
+			})
+		} else {
+			value.map((item, index) => {
+				if (index % 4 === 0) {
+					initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
+				}
+			})
+		}
 	} else {
 		value.map((item, index) => {
 			if (index % 3 === 0) {
@@ -37,7 +60,7 @@ function CartographicDegreesValue(props) {
 	}
 
 	const [enableTimeInput, setEnableTimeInput] = useState(valueVaryTime)
-	const [isUseEpoch, setUseEpoch] = useState(false);
+	const [isUseEpoch, setUseEpoch] = useState(!!epoch);
 	const [valueAry, setValueAry] = useState(initValue || []);
 
 	useEffect(() => {
@@ -83,9 +106,9 @@ function CartographicDegreesValue(props) {
 		valueAry.forEach((item, index) => {
 			if (endEnableTimeInput) {
 				if (item.length === 3) {
-					if(!isUseEpoch){
+					if (!isUseEpoch) {
 						valueAry[index] = [new dayjs(Date.now()), item[0], item[1], item[2]];
-					}else{
+					} else {
 						valueAry[index] = [0, item[0], item[1], item[2]];
 					}
 				}
@@ -109,7 +132,7 @@ function CartographicDegreesValue(props) {
 				x = item[1];
 				y = item[2];
 				z = item[3];
-			} 
+			}
 			return (
 				<div key={index}>
 					{enableTimeInput && !isUseEpoch &&
@@ -125,6 +148,7 @@ function CartographicDegreesValue(props) {
 					{enableTimeInput && isUseEpoch &&
 						<InputNumber
 							value={time}
+							title={"second after epoch"}
 							onChange={(date) => {
 								item[0] = date;
 								setValueAry([...valueAry]);
@@ -135,12 +159,13 @@ function CartographicDegreesValue(props) {
 					<InputNumber
 						value={x}
 						placeholder='经度'
+						title={"latitude"}
 						min={-180}
 						max={180}
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[1] = e;
-							}else{
+							} else {
 								item[0] = e;
 							}
 							setValueAry([...valueAry]);
@@ -149,12 +174,13 @@ function CartographicDegreesValue(props) {
 					<InputNumber
 						value={y}
 						placeholder='纬度'
+						title="longitude"
 						min={-90}
 						max={90}
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[2] = e;
-							}else{
+							} else {
 								item[1] = e;
 							}
 							setValueAry([...valueAry]);
@@ -162,10 +188,12 @@ function CartographicDegreesValue(props) {
 					/>
 					<InputNumber
 						value={z}
+						placeholder='高度'
+						title="altitude"
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[3] = e;
-							}else{
+							} else {
 								item[2] = e;
 							}
 							setValueAry([...valueAry]);
@@ -194,7 +222,7 @@ function CartographicDegreesValue(props) {
 				toggleEpoch()
 			}}>useEpoch {isUseEpoch ? `true` : 'false'} </Button>
 			{ArrayItem(valueAry)}
-			{ valueAry.length === 0 && <Button onClick={addNewItem}>新增</Button> }
+			{valueAry.length === 0 && <Button onClick={addNewItem}>新增</Button>}
 		</div>
 	);
 }

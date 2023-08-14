@@ -6,6 +6,14 @@ dayjs().locale('zh-cn').format();
 
 function Cartesian3Value(props) {
 	// TimeISO/TimeISO for interval
+
+	const formContext = props.formContext;
+	const { formData } = formContext;
+	let epoch = null;
+	if (formData) {
+		epoch = formData.epoch;
+	}
+
 	const value = props.value;
 	console.log(' Cartesian3Value----props ', props);
 	let valueVaryTime = false;
@@ -17,17 +25,30 @@ function Cartesian3Value(props) {
 		})
 	}
 
+	if (!!epoch) {
+		valueVaryTime = true;
+	}
+
 	console.log(' ----- isValueVaryTime ---- ', valueVaryTime);
 	console.log(' ----- value ---- ', value);
 
 	let initValue = [];
 
 	if (valueVaryTime) {
-		value.map((item, index) => {
-			if (index % 4 === 0) {
-				initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
-			}
-		})
+		if (!!epoch) {
+			// if epoch is set then 
+			value.map((item, index) => {
+				if (index % 4 === 0) {
+					initValue.push([item, value[index + 1], value[index + 2], value[index + 3]]);
+				}
+			})
+		} else {
+			value.map((item, index) => {
+				if (index % 4 === 0) {
+					initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
+				}
+			})
+		}
 	} else {
 		value.map((item, index) => {
 			if (index % 3 === 0) {
@@ -37,7 +58,7 @@ function Cartesian3Value(props) {
 	}
 
 	const [enableTimeInput, setEnableTimeInput] = useState(valueVaryTime)
-	const [isUseEpoch, setUseEpoch] = useState(false);
+	const [isUseEpoch, setUseEpoch] = useState(!!epoch);
 	const [valueAry, setValueAry] = useState(initValue || []);
 
 	useEffect(() => {
@@ -83,9 +104,9 @@ function Cartesian3Value(props) {
 		valueAry.forEach((item, index) => {
 			if (endEnableTimeInput) {
 				if (item.length === 3) {
-					if(!isUseEpoch){
+					if (!isUseEpoch) {
 						valueAry[index] = [new dayjs(Date.now()), item[0], item[1], item[2]];
-					}else{
+					} else {
 						valueAry[index] = [0, item[0], item[1], item[2]];
 					}
 				}
@@ -125,6 +146,7 @@ function Cartesian3Value(props) {
 					{enableTimeInput && isUseEpoch &&
 						<InputNumber
 							value={time}
+							title={"second after epoch"}
 							onChange={(date) => {
 								item[0] = date;
 								setValueAry([...valueAry]);
@@ -134,10 +156,11 @@ function Cartesian3Value(props) {
 
 					<InputNumber
 						value={x}
+						title={"X"}
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[1] = e;
-							}else{
+							} else {
 								item[0] = e;
 							}
 							setValueAry([...valueAry]);
@@ -145,10 +168,11 @@ function Cartesian3Value(props) {
 					/>
 					<InputNumber
 						value={y}
+						title={"Y"}
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[2] = e;
-							}else{
+							} else {
 								item[1] = e;
 							}
 							setValueAry([...valueAry]);
@@ -156,10 +180,11 @@ function Cartesian3Value(props) {
 					/>
 					<InputNumber
 						value={z}
+						title={"Z"}
 						onChange={(e) => {
-							if(enableTimeInput){
+							if (enableTimeInput) {
 								item[3] = e;
-							}else{
+							} else {
 								item[2] = e;
 							}
 							setValueAry([...valueAry]);
@@ -188,7 +213,7 @@ function Cartesian3Value(props) {
 				toggleEpoch()
 			}}>useEpoch {isUseEpoch ? `true` : 'false'} </Button>
 			{ArrayItem(valueAry)}
-			{ valueAry.length === 0 && <Button onClick={addNewItem}>新增</Button> }
+			{valueAry.length === 0 && <Button onClick={addNewItem}>新增</Button>}
 		</div>
 	);
 }

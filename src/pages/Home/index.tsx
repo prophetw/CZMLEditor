@@ -301,6 +301,10 @@ const HomePage: React.FC = () => {
           </div>
           {formData && 
           <Form
+            formContext={{
+              formData,
+              // other props...
+            }}
             formData={formData}
             onChange={(e) => setForm(e)}
             schema={formSchema}
