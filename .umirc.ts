@@ -28,6 +28,11 @@ export default defineConfig({
       redirect: '/home',
     },
     {
+      path: '/editor',
+      component: './Editor',
+      layout: false
+    },
+    {
       name: '首页',
       title: 'CZML-editor',
       path: '/home',
