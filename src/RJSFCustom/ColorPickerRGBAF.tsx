@@ -8,13 +8,6 @@ dayjs().locale('zh-cn').format();
 function ColorPickerRGBAF(props) {
 	// TimeISO/TimeISO for interval
 
-	// const formContext = props.formContext;
-	// const { formData } = formContext;
-
-	// RGBA   0~255
-
-	// RGBAF  0~1 
-
 	const value = props.value;
 	console.log(' RGBAF 0~1 ', props, value);
 	const targetValue = `rgba(${value[0] * 255}, ${value[1] * 255}, ${value[2] * 255}, ${value[3]})`

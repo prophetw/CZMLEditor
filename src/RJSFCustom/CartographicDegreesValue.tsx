@@ -159,7 +159,7 @@ function CartographicDegreesValue(props) {
 					<InputNumber
 						value={x}
 						placeholder='经度'
-						title={"latitude"}
+						title={"lontitude in degree"}
 						min={-180}
 						max={180}
 						onChange={(e) => {
@@ -174,7 +174,7 @@ function CartographicDegreesValue(props) {
 					<InputNumber
 						value={y}
 						placeholder='纬度'
-						title="longitude"
+						title="latitude in degree"
 						min={-90}
 						max={90}
 						onChange={(e) => {

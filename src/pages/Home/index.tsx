@@ -44,7 +44,8 @@ const czmlDemoKeymap = {
 const widgets = { // custom format name => custom widget component 
   double_date_time_picker: DoubleDateTimePicker,
   cartesian3_value: Cartesian3Value,
-  cartographicDegree_value: CartographicDegreesValue,
+  cartographicDegree_value: Cartesian3Value,
+  cartographicRadians_value: Cartesian3Value,
   color_rgba: ColorPickerRGBA,
   color_rgbaf: ColorPickerRGBAF
 }
@@ -53,11 +54,14 @@ const uiSchema = {
   cartesian: {
     'ui:widget': 'cartesian3_value',
   },
+  cartographicDegrees: {
+    'ui:widget': 'cartesian3_value',
+  },
+  cartographicRadians: {
+    'ui:widget': 'cartesian3_value',
+  },
   interval: {
     'ui:widget': 'double_date_time_picker',
-  },
-  cartographicDegrees: {
-    'ui:widget': 'cartographicDegree_value',
   },
   backgroundColor: {
     rgba: {

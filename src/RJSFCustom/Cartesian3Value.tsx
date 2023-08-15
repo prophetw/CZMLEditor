@@ -8,6 +8,13 @@ function Cartesian3Value(props) {
 	// TimeISO/TimeISO for interval
 
 	const formContext = props.formContext;
+	const key = props.name;  // the key of this component cartesian  cartographicDegrees cartographicRadians           
+
+	// cartesian x y z 
+  // cartographicDegrees lontitude latitude height
+	// cartographicRadians lontitude latitude height 
+
+
 	const { formData } = formContext;
 	let epoch = null;
 	if (formData) {
@@ -121,7 +128,27 @@ function Cartesian3Value(props) {
 	}
 
 	const ArrayItem = (ary) => {
-		console.log(' ary ', ary);
+		let min = Number.NEGATIVE_INFINITY;
+		let max = Number.POSITIVE_INFINITY;
+		let min2 = Number.NEGATIVE_INFINITY;
+		let max2 = Number.POSITIVE_INFINITY;
+		let title = 'X';
+		let title2 = 'Y';
+		if( key === 'cartographicDegrees'){
+			min = -180;
+			max = 180;
+			min2 = -90;
+			max2 = 90;
+			title = 'Lontitude in degrees';
+			title2 = 'Latitude in degrees';
+		}else if (key === 'cartographicRadians'){
+			min = -Math.PI;
+			max = Math.PI;
+			min2 = -Math.PI/2;
+			max2 = Math.PI/2;
+			title = 'Lontitude in radians';
+			title2 = 'Latitude in radians ';
+		}
 		return ary.map((item, index) => {
 			let [x, y, z] = item
 			let time = null;
@@ -156,7 +183,9 @@ function Cartesian3Value(props) {
 
 					<InputNumber
 						value={x}
-						title={"X"}
+						min={min}
+						max={max}
+						title={title}
 						onChange={(e) => {
 							if (enableTimeInput) {
 								item[1] = e;
@@ -168,7 +197,9 @@ function Cartesian3Value(props) {
 					/>
 					<InputNumber
 						value={y}
-						title={"Y"}
+						min={min2}
+						max={max2}
+						title={title2}
 						onChange={(e) => {
 							if (enableTimeInput) {
 								item[2] = e;
@@ -180,7 +211,7 @@ function Cartesian3Value(props) {
 					/>
 					<InputNumber
 						value={z}
-						title={"Z"}
+						title={"Z or Height "}
 						onChange={(e) => {
 							if (enableTimeInput) {
 								item[3] = e;
