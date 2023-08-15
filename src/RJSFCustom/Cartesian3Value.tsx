@@ -11,7 +11,7 @@ function Cartesian3Value(props) {
 	const key = props.name;  // the key of this component cartesian  cartographicDegrees cartographicRadians           
 
 	// cartesian x y z 
-  // cartographicDegrees lontitude latitude height
+	// cartographicDegrees lontitude latitude height
 	// cartographicRadians lontitude latitude height 
 
 
@@ -36,7 +36,7 @@ function Cartesian3Value(props) {
 	}
 
 	let initValue = null;
-	if(value && value.length > 0) {
+	if (value && value.length > 0) {
 		initValue = []
 	}
 
@@ -126,108 +126,114 @@ function Cartesian3Value(props) {
 	}
 
 	const ArrayItem = (ary) => {
+		// when large ary will encounter performance issue
+		//  
 		let min = Number.NEGATIVE_INFINITY;
 		let max = Number.POSITIVE_INFINITY;
 		let min2 = Number.NEGATIVE_INFINITY;
 		let max2 = Number.POSITIVE_INFINITY;
 		let title = 'X';
 		let title2 = 'Y';
-		if( key === 'cartographicDegrees'){
+		if (key === 'cartographicDegrees') {
 			min = -180;
 			max = 180;
 			min2 = -90;
 			max2 = 90;
 			title = 'Lontitude in degrees';
 			title2 = 'Latitude in degrees';
-		}else if (key === 'cartographicRadians'){
+		} else if (key === 'cartographicRadians') {
 			min = -Math.PI;
 			max = Math.PI;
-			min2 = -Math.PI/2;
-			max2 = Math.PI/2;
+			min2 = -Math.PI / 2;
+			max2 = Math.PI / 2;
 			title = 'Lontitude in radians';
 			title2 = 'Latitude in radians ';
 		}
-		return ary.map((item, index) => {
-			let [x, y, z] = item
-			let time = null;
-			if (enableTimeInput) {
-				time = item[0];
-				x = item[1];
-				y = item[2];
-				z = item[3];
-			}
-			return (
-				<div key={index}>
-					{enableTimeInput && !isUseEpoch &&
-						<DatePicker
-							value={time}
-							onChange={(date) => {
-								item[0] = date;
-								setValueAry([...valueAry]);
-							}}
-							showTime
-						/>
+		return (
+			<div style={{maxHeight: 300, overflow: 'auto'}}>
+				{ary.map((item, index) => {
+					let [x, y, z] = item
+					let time = null;
+					if (enableTimeInput) {
+						time = item[0];
+						x = item[1];
+						y = item[2];
+						z = item[3];
 					}
-					{enableTimeInput && isUseEpoch &&
-						<InputNumber
-							value={time}
-							title={"second after epoch"}
-							onChange={(date) => {
-								item[0] = date;
-								setValueAry([...valueAry]);
-							}}
-						/>
-					}
-					<InputNumber
-						value={x}
-						min={min}
-						max={max}
-						title={title}
-						onChange={(e) => {
-							if (enableTimeInput) {
-								item[1] = e;
-							} else {
-								item[0] = e;
+					return (
+						<div key={index}>
+							{enableTimeInput && !isUseEpoch &&
+								<DatePicker
+									value={time}
+									onChange={(date) => {
+										item[0] = date;
+										setValueAry([...valueAry]);
+									}}
+									showTime
+								/>
 							}
-							setValueAry([...valueAry]);
-						}}
-					/>
-					<InputNumber
-						value={y}
-						min={min2}
-						max={max2}
-						title={title2}
-						onChange={(e) => {
-							if (enableTimeInput) {
-								item[2] = e;
-							} else {
-								item[1] = e;
+							{enableTimeInput && isUseEpoch &&
+								<InputNumber
+									value={time}
+									title={"second after epoch"}
+									onChange={(date) => {
+										item[0] = date;
+										setValueAry([...valueAry]);
+									}}
+								/>
 							}
-							setValueAry([...valueAry]);
-						}}
-					/>
-					<InputNumber
-						value={z}
-						title={"Z or Height "}
-						onChange={(e) => {
-							if (enableTimeInput) {
-								item[3] = e;
-							} else {
-								item[2] = e;
-							}
-							setValueAry([...valueAry]);
-						}}
-					/>
-					<div>
-						<Button onClick={() => {
-							valueAry.splice(index, 1);
-							setValueAry([...valueAry]);
-						}}>删除</Button>
-						<Button onClick={addNewItem}>新增</Button>
-					</div>
-				</div>
-			)
-		})
+							<InputNumber
+								value={x}
+								min={min}
+								max={max}
+								title={title}
+								onChange={(e) => {
+									if (enableTimeInput) {
+										item[1] = e;
+									} else {
+										item[0] = e;
+									}
+									setValueAry([...valueAry]);
+								}}
+							/>
+							<InputNumber
+								value={y}
+								min={min2}
+								max={max2}
+								title={title2}
+								onChange={(e) => {
+									if (enableTimeInput) {
+										item[2] = e;
+									} else {
+										item[1] = e;
+									}
+									setValueAry([...valueAry]);
+								}}
+							/>
+							<InputNumber
+								value={z}
+								title={"Z or Height "}
+								onChange={(e) => {
+									if (enableTimeInput) {
+										item[3] = e;
+									} else {
+										item[2] = e;
+									}
+									setValueAry([...valueAry]);
+								}}
+							/>
+							<div>
+								<Button onClick={() => {
+									valueAry.splice(index, 1);
+									setValueAry([...valueAry]);
+								}}>删除</Button>
+								<Button onClick={addNewItem}>新增</Button>
+							</div>
+						</div>
+					)
+				})}
+			</div>
+		)
 
 	}
 

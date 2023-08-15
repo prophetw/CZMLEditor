@@ -9,6 +9,7 @@ import PointJSONSchema from '../../CZMLSchemaJSON/Base/Point.json'
 import ModelJSONSchema from '../../CZMLSchemaJSON/Base/Model.json'
 import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
 import PositionJSONSchema from '../../CZMLSchemaJSON/Base/Position.json'
+import PathJSONSchema from '../../CZMLSchemaJSON/Base/Path.json'
 
 const BaseJSONSchemaObj = {
   billboard: BillboardJSONSchema,
@@ -21,6 +22,7 @@ const BaseJSONSchemaObj = {
   clock: ClockJSONSchema,
   rectangle: RectangleJSONSchema,
   position: PositionJSONSchema,
+  path: PathJSONSchema,
 }
 
 const validPacketKeys = Object.keys(BaseJSONSchemaObj.packet.properties)
@@ -38,7 +40,8 @@ const editableKeysInPacketSchema = [
   "rectangle",
   "clock",
   "model",
-  "position"
+  "position",
+  "path",
 ]
 
 // console.log('validPacketKeys', validPacketKeys);

@@ -16,6 +16,7 @@ import CZMLPolygon from '../../../CZMLSchemaJSON/testFile/CesiumPolygon.json'
 import CZMLPolyline from '../../../CZMLSchemaJSON/testFile/CesiumPolyline.json'
 import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.json'
 import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
+import CZMLPath from '../../../CZMLSchemaJSON/testFile/CesiumPath.json'
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 import { Button, Select } from 'antd';
 import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
@@ -37,6 +38,7 @@ const czmlDemoKeymap = {
   polylineRed: CZMLPolylineRed,
   polylineDef: CZMLPolylineDef,
   pointTime: CZMLPointTime,
+  path: CZMLPath,
 }
 
 
@@ -274,8 +276,8 @@ const HomePage: React.FC = () => {
             <div className={styles.packet_item_title} onClick={() => {
               expandPacketItem(item)
             }}>
-              <span className={styles.packet_item_title_name}>{item.id}</span>
-              <span className={styles.packet_item_title_type}>{item.name}</span>
+              <span className={styles.packet_item_title_name}>Packet{index} id: {item.id}</span>
+              <span className={styles.packet_item_title_type}> name: {item.name}</span>
               <div className={styles.packet_item_keys}>
                 {item.expand && Object.keys(item).map((key, index) => {
                   if (editableKeysInPacketSchema.indexOf(key) === -1) {
@@ -320,7 +322,7 @@ const HomePage: React.FC = () => {
               width: 200,
               right: 0,
               top: 0,
-            }} value={curDemoName} onChange={(value) => {
+            }} value={curDemoName} onChange={async (value) => {
               console.log(value);
               setCurDemoName(value)
               // @ts-ignore
@@ -329,14 +331,20 @@ const HomePage: React.FC = () => {
               setPacketAry(czml)
               if (cesiumViewer) {
                 cesiumViewer.dataSources.removeAll()
-                const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-                cesiumViewer.dataSources.add(dataSourcePromise);
+                const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+                await cesiumViewer.dataSources.add(dataSourcePromise);
+                const path = cesiumViewer.dataSources._dataSources[0].entities.getById('path')
+                console.log(' path ', path);
                 cesiumViewer.zoomTo(dataSourcePromise);
+
+                if(path){
+                  cesiumViewer.trackedEntity = path
+                }
               }
               if (thumbnailViewer) {
                 thumbnailViewer.dataSources.removeAll()
-                const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-                thumbnailViewer.dataSources.add(dataSourcePromise);
+                const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+                await thumbnailViewer.dataSources.add(dataSourcePromise);
                 thumbnailViewer.zoomTo(dataSourcePromise);
               }
             }}>
@@ -359,8 +367,8 @@ const HomePage: React.FC = () => {
             validator={validator}
             uiSchema={uiSchema}
             experimental_defaultFormStateBehavior={{
-              // emptyObjectFields: 'skipDefaults',
-              emptyObjectFields: 'populateRequiredDefaults',
+              emptyObjectFields: 'skipDefaults',
+              // emptyObjectFields: 'populateRequiredDefaults',
               // emptyObjectFields: 'populateAllDefaults' // this is  default config
             }}
           />}
