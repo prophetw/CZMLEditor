@@ -40,54 +40,75 @@ function Cartesian3Value(props) {
 		initValue = []
 	}
 
-	if (valueVaryTime) {
-		if (!!epoch) {
-			// if epoch is set then 
-			value.map((item, index) => {
-				if (index % 4 === 0) {
-					initValue.push([item, value[index + 1], value[index + 2], value[index + 3]]);
-				}
-			})
+
+	if (value && value.length > 0) {
+		if (valueVaryTime) {
+			if (!!epoch) {
+				// if epoch is set then 
+				value.map((item, index) => {
+					if (index % 4 === 0) {
+						initValue.push([item, value[index + 1], value[index + 2], value[index + 3]]);
+					}
+				})
+			} else {
+				value.map((item, index) => {
+					if (index % 4 === 0) {
+						initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
+					}
+				})
+			}
 		} else {
 			value.map((item, index) => {
-				if (index % 4 === 0) {
-					initValue.push([new dayjs(item), value[index + 1], value[index + 2], value[index + 3]]);
+				if (index % 3 === 0) {
+					initValue.push([value[index], value[index + 1], value[index + 2]]);
 				}
 			})
 		}
-	} else {
-		value.map((item, index) => {
-			if (index % 3 === 0) {
-				initValue.push([value[index], value[index + 1], value[index + 2]]);
-			}
-		})
 	}
+
 
 	const [enableTimeInput, setEnableTimeInput] = useState(valueVaryTime)
 	const [isUseEpoch, setUseEpoch] = useState(!!epoch);
-	const [valueAry, setValueAry] = useState(initValue || []); // [ item = [], item = [], item = [] ]
+	const [valueAry, setValueAry] = useState<any[] | null>(initValue); // [ item = [], item = [], item = [] ]
 
 	useEffect(() => {
-		const result = valueAry.flat()
-		if (enableTimeInput && !isUseEpoch) {
-			result.map((item, index) => {
-				if (index % 4 === 0) {
-					result[index] = item.toISOString();
-				}
-			})
+		let result = null;
+		if (valueAry === null) {
+		} else {
+			result = valueAry.flat()
+			if (enableTimeInput && !isUseEpoch) {
+				result.map((item, index) => {
+					if (index % 4 === 0) {
+						result[index] = item.toISOString();
+					}
+				})
+			}
 		}
 		props.onChange(result);
 	}, [valueAry])
 
 	const addNewItem = () => {
+		const oldAry = valueAry ? valueAry : [];
 		if (enableTimeInput) {
-			setValueAry([...valueAry, [new dayjs(Date.now()), 0, 0, 0]]);
+			setValueAry([...oldAry, [new dayjs(Date.now()), 0, 0, 0]]);
 		} else {
-			setValueAry([...valueAry, [0, 0, 0]]);
+			setValueAry([...oldAry, [0, 0, 0]]);
+		}
+	}
+
+	const deleteItem = (index: number) => {
+		if (valueAry === null) return
+		const oldAry = valueAry ? valueAry : [];
+		oldAry.splice(index, 1);
+		if (oldAry.length === 0) {
+			setValueAry(null);
+		} else {
+			setValueAry([...oldAry]);
 		}
 	}
 
 	const toggleEpoch = () => {
+		if (valueAry === null) return
 		let useEpoch = !isUseEpoch;
 		valueAry.forEach((item, index) => {
 			if (enableTimeInput) {
@@ -105,6 +126,7 @@ function Cartesian3Value(props) {
 	}
 
 	const toggleTime = () => {
+		if (valueAry === null) return
 		let endEnableTimeInput = !enableTimeInput;
 		valueAry.forEach((item, index) => {
 			if (endEnableTimeInput) {
@@ -150,7 +172,7 @@ function Cartesian3Value(props) {
 			title2 = 'Latitude in radians ';
 		}
 		return (
-			<div style={{maxHeight: 300, overflow: 'auto'}}>
+			<div style={{ maxHeight: 300, overflow: 'auto' }}>
 				{ary.map((item, index) => {
 					let [x, y, z] = item
 					let time = null;
@@ -224,8 +246,7 @@ function Cartesian3Value(props) {
 							/>
 							<div>
 								<Button onClick={() => {
-									valueAry.splice(index, 1);
-									setValueAry([...valueAry]);
+									deleteItem(index)
 								}}>删除</Button>
 								<Button onClick={addNewItem}>新增</Button>
 							</div>
@@ -246,8 +267,8 @@ function Cartesian3Value(props) {
 			<Button onClick={(e) => {
 				toggleEpoch()
 			}}>useEpoch {isUseEpoch ? `true` : 'false'} </Button>
-			{ArrayItem(valueAry)}
-			{valueAry.length === 0 && <Button onClick={addNewItem}>新增</Button>}
+			{valueAry !== null && valueAry.length > 0 && ArrayItem(valueAry)}
+			{valueAry === null && <Button onClick={addNewItem}>新增</Button>}
 		</div>
 	);
 }

@@ -355,7 +355,7 @@ const EditorPage: React.FC = () => {
                 console.log(' path ', path);
                 cesiumViewer.zoomTo(dataSourcePromise);
 
-                if(path){
+                if (path) {
                   cesiumViewer.trackedEntity = path
                 }
               }
@@ -372,24 +372,24 @@ const EditorPage: React.FC = () => {
             </Select>
 
           </div>
-          {formData && 
-          <Form
-            formContext={{
-              formData,
-              // other props...
-            }}
-            formData={formData}
-            onChange={(e) => setForm(e)}
-            schema={formSchema}
-            widgets={widgets}
-            validator={validator}
-            uiSchema={uiSchema}
-            experimental_defaultFormStateBehavior={{
-              emptyObjectFields: 'skipDefaults',
-              // emptyObjectFields: 'populateRequiredDefaults',
-              // emptyObjectFields: 'populateAllDefaults' // this is  default config
-            }}
-          />}
+          {formData &&
+            <Form
+              formContext={{
+                formData,
+                // other props...
+              }}
+              formData={formData}
+              onChange={(e) => setForm(e)}
+              schema={formSchema}
+              widgets={widgets}
+              validator={validator}
+              uiSchema={uiSchema}
+              experimental_defaultFormStateBehavior={{
+                emptyObjectFields: 'skipDefaults',
+                // emptyObjectFields: 'populateRequiredDefaults',
+                // emptyObjectFields: 'populateAllDefaults' // this is  default config
+              }}
+            />}
         </div>
         <div id="thumbnailContainer" className={styles.thumbnail_container}>
         </div>
@@ -405,8 +405,7 @@ const EditorPage: React.FC = () => {
           <Button onClick={() => {
             getThumbnail()
           }}>getThumbnail</Button>
-          {thumbnailDataUrl && <img style={{border: "1px solid #666"}} src={thumbnailDataUrl} alt="" />}
-
+          {thumbnailDataUrl && <img style={{ border: "1px solid #666" }} src={thumbnailDataUrl} alt="" />}
         </div>
       </div>
 
