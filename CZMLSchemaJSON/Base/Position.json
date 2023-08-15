@@ -40,10 +40,6 @@
             "czmlExamples": [
                 "Examples/PositionCartographicDegrees.json"
             ]
-        },
-        "cartesianVelocity": {
-            "$ref": "Values/Cartesian3VelocityValue.json",
-            "description": "The position and velocity specified as a three-dimensional Cartesian value and its derivative, `[X, Y, Z, dX, dY, dZ]`, in meters relative to the `referenceFrame`."
         }
     }
 }

@@ -22,7 +22,6 @@ function Cartesian3Value(props) {
 	}
 
 	const value = props.value;
-	console.log(' Cartesian3Value----props ', props);
 	let valueVaryTime = false;
 	if (value && value.length > 0) {
 		value.map((item, index) => {
@@ -36,10 +35,10 @@ function Cartesian3Value(props) {
 		valueVaryTime = true;
 	}
 
-	console.log(' ----- isValueVaryTime ---- ', valueVaryTime);
-	console.log(' ----- value ---- ', value);
-
-	let initValue = [];
+	let initValue = null;
+	if(value && value.length > 0) {
+		initValue = []
+	}
 
 	if (valueVaryTime) {
 		if (!!epoch) {
@@ -70,7 +69,6 @@ function Cartesian3Value(props) {
 
 	useEffect(() => {
 		const result = valueAry.flat()
-		console.log(result);
 		if (enableTimeInput && !isUseEpoch) {
 			result.map((item, index) => {
 				if (index % 4 === 0) {
@@ -180,7 +178,6 @@ function Cartesian3Value(props) {
 							}}
 						/>
 					}
-
 					<InputNumber
 						value={x}
 						min={min}

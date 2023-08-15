@@ -20,7 +20,6 @@ import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 import { Button, Select } from 'antd';
 import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
 import Cartesian3Value from '@/RJSFCustom/Cartesian3Value';
-import CartographicDegreesValue from '@/RJSFCustom/CartographicDegreesValue';
 import ColorPickerRGBA from '@/RJSFCustom/ColorPickerRGBA';
 import ColorPickerRGBAF from '@/RJSFCustom/ColorPickerRGBAF';
 
@@ -362,6 +361,7 @@ const HomePage: React.FC = () => {
             experimental_defaultFormStateBehavior={{
               // emptyObjectFields: 'skipDefaults',
               emptyObjectFields: 'populateRequiredDefaults',
+              // emptyObjectFields: 'populateAllDefaults' // this is  default config
             }}
           />}
         </div>
@@ -378,9 +378,8 @@ const HomePage: React.FC = () => {
           <Button onClick={() => {
             getThumbnail()
           }}>getThumbnail</Button>
-          <img style={{border: "1px solid #666"}} src={thumbnailDataUrl} alt="" />
+          {thumbnailDataUrl && <img style={{border: "1px solid #666"}} src={thumbnailDataUrl} alt="" />}
 
-          <DoubleDateTimePicker /> 
         </div>
       </div>
 

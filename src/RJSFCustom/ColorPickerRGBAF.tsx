@@ -9,7 +9,7 @@ function ColorPickerRGBAF(props) {
 	// TimeISO/TimeISO for interval
 
 	const value = props.value;
-	console.log(' RGBAF 0~1 ', props, value);
+	// console.log(' RGBAF 0~1 ', props, value);
 	const targetValue = `rgba(${value[0] * 255}, ${value[1] * 255}, ${value[2] * 255}, ${value[3]})`
 
 	const [color, setColor] = useState<ColorPickerProps['value']>(targetValue);
@@ -21,7 +21,7 @@ function ColorPickerRGBAF(props) {
 		// color.toRgb // { r: 0, g: 0, b: 0, a: 0 }
 		if(typeof color === 'string') return	
 		if(!color) return
-		console.log(color);
+		// console.log(color);
 		const rgba = color.toRgb()
 		const result = [rgba.r / 255, rgba.g / 255, rgba.b / 255, rgba.a]
 		props.onChange(result)
