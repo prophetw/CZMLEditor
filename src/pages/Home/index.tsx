@@ -1,4 +1,5 @@
 import Form from '@rjsf/antd';
+import { Button, Select } from 'antd';
 import { RJSFSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { useEffect, useState } from 'react';
@@ -18,13 +19,10 @@ import CZMLPolylineRed from '../../../CZMLSchemaJSON/testFile/CesiumRedPolyline.
 import CZMLPolylineDef from '../../../CZMLSchemaJSON/testFile/CesiumPolylineDefinitions.json'
 import CZMLPath from '../../../CZMLSchemaJSON/testFile/CesiumPath.json'
 import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
-import { Button, Select } from 'antd';
-import DoubleDateTimePicker from '@/RJSFCustom/CZMLIntervalValue';
-import Cartesian3Value from '@/RJSFCustom/Cartesian3Value';
-import ColorPickerRGBA from '@/RJSFCustom/ColorPickerRGBA';
-import ColorPickerRGBAF from '@/RJSFCustom/ColorPickerRGBAF';
-
-
+import { uiSchema as CZMLUISchema } from '@/utils/CZMLUISchema';
+import { CZMLCustomWidgets } from '@/utils/CZMLWidgets';
+const widgets = CZMLCustomWidgets
+const uiSchema = CZMLUISchema
 
 const DEFAULT_KEY = 'billboard'
 
@@ -42,70 +40,6 @@ const czmlDemoKeymap = {
 }
 
 
-const widgets = { // custom format name => custom widget component 
-  double_date_time_picker: DoubleDateTimePicker,
-  cartesian3_value: Cartesian3Value,
-  cartographicDegree_value: Cartesian3Value,
-  cartographicRadians_value: Cartesian3Value,
-  color_rgba: ColorPickerRGBA,
-  color_rgbaf: ColorPickerRGBAF
-}
-
-const uiSchema = {
-  cartesian: {
-    'ui:widget': 'cartesian3_value',
-  },
-  cartographicDegrees: {
-    'ui:widget': 'cartesian3_value',
-  },
-  cartographicRadians: {
-    'ui:widget': 'cartesian3_value',
-  },
-  interval: {
-    'ui:widget': 'double_date_time_picker',
-  },
-  backgroundColor: {
-    rgba: {
-      'ui:widget': 'color_rgba',
-    },
-    rgbaf: {
-      'ui:widget': 'color_rgbaf',
-    }
-  },
-  fillColor: {
-    rgba: {
-      'ui:widget': 'color_rgba',
-    },
-    rgbaf: {
-      'ui:widget': 'color_rgbaf',
-    }
-  },
-  outlineColor: {
-    rgba: {
-      'ui:widget': 'color_rgba',
-    },
-    rgbaf: {
-      'ui:widget': 'color_rgbaf',
-    }
-  },
-  color: {
-    rgba: {
-      'ui:widget': 'color_rgba',
-    },
-    rgbaf: {
-      'ui:widget': 'color_rgbaf',
-    }
-  },
-  silhouetteColor: {
-    rgba: {
-      'ui:widget': 'color_rgba',
-    },
-    rgbaf: {
-      'ui:widget': 'color_rgbaf',
-    }
-  }
-
-}
 
 const HomePage: React.FC = () => {
   const [formData, setFormData] = useState(null);

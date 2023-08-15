@@ -148,11 +148,11 @@ const czmlSchemaTypeKeymap = {
         properties: {
           cartographicRadians: {
             type: 'array',
+            format: 'cartesian3_value',
             items:
             {
               type: "number",
               description: " Longitude, Latitude, Height in radians",
-              default: 0,
             },
             minItems: 9,
           }
@@ -164,11 +164,11 @@ const czmlSchemaTypeKeymap = {
         properties: {
           cartographicDegrees: {
             type: 'array',
+            format: 'cartesian3_value',
             items:
             {
               type: "number",
               description: " Longitude, Latitude, Height in degrees",
-              default: 0,
             },
             minItems: 9,
           }
@@ -180,11 +180,11 @@ const czmlSchemaTypeKeymap = {
         properties: {
           cartesian: {
             type: 'array',
+            format: 'cartesian3_value',
             items:
             {
               type: "number",
               description: " X, Y, Z",
-              default: 0,
             },
             minItems: 9,
           }
