@@ -211,7 +211,7 @@ const HomePage: React.FC = () => {
               expandPacketItem(item)
             }}>
               <span className={styles.packet_item_title_name}>Packet{index} id: {item.id}</span>
-              <span className={styles.packet_item_title_type}> name: {item.name}</span>
+              {/* <span className={styles.packet_item_title_type}> name: {item.name}</span> */}
               <div className={styles.packet_item_keys}>
                 {item.expand && Object.keys(item).map((key, index) => {
                   if (editableKeysInPacketSchema.indexOf(key) === -1) {

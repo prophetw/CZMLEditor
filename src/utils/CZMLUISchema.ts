@@ -2,12 +2,22 @@ const uiSchema = {
 	positions: {
 		cartesian: {
 			'ui:widget': 'cartesian3_value',
+			'ui:option': {
+				from: "positionList",
+			}
 		},
 		cartographicDegrees: {
 			'ui:widget': 'cartesian3_value',
+			'ui:option': {
+				from: "positionList",
+			},
+			from: "positionList",
 		},
 		cartographicRadians: {
 			'ui:widget': 'cartesian3_value',
+			'ui:option': {
+				from: "positionList",
+			}
 		},
 	},
 
@@ -50,6 +60,63 @@ const uiSchema = {
 	material: {
 		solidColor: {
 			color: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			}
+		},
+		polylineDash: {
+			color: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			},
+			gapColor: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			}
+
+		},
+		polylineGlow: {
+			color: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			}
+		},
+		polylineArrow: {
+			color: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			}
+		},
+		checkerboard: {
+			evenColor: {
+				rgba: {
+					'ui:widget': 'color_rgba',
+				},
+				rgbaf: {
+					'ui:widget': 'color_rgbaf',
+				}
+			},
+			oddColor: {
 				rgba: {
 					'ui:widget': 'color_rgba',
 				},

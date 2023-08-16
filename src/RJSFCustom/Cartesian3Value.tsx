@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { DatePicker, InputNumber, Button } from 'antd';
+import { DatePicker, InputNumber, Button, Modal } from 'antd';
 import dayjs from 'dayjs';
+import TextArea from 'antd/es/input/TextArea';
 // dayjs.locale('zh-cn');
 dayjs().locale('zh-cn').format();
 
 function Cartesian3Value(props) {
 	// TimeISO/TimeISO for interval
+
+	console.log(' cartesian3Value cop ---- ', props);
 
 	const formContext = props.formContext;
 	const key = props.name;  // the key of this component cartesian  cartographicDegrees cartographicRadians           
@@ -70,6 +73,8 @@ function Cartesian3Value(props) {
 	const [enableTimeInput, setEnableTimeInput] = useState(valueVaryTime)
 	const [isUseEpoch, setUseEpoch] = useState(!!epoch);
 	const [valueAry, setValueAry] = useState<any[] | null>(initValue); // [ item = [], item = [], item = [] ]
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [textareaValue, setTextareaValue] = useState('')
 
 	useEffect(() => {
 		let result = null;
@@ -84,8 +89,24 @@ function Cartesian3Value(props) {
 				})
 			}
 		}
+		if(result !== null) {
+			const textareaVal = result.join(',')
+			setTextareaValue(textareaVal);
+		}
 		props.onChange(result);
 	}, [valueAry])
+
+	const showModal = () => {
+		setIsModalOpen(true);
+	}
+
+	const handleOk = () => {
+		setIsModalOpen(false);
+	}
+
+	const handleCancel = () => {
+		setIsModalOpen(false);
+	}
 
 	const addNewItem = () => {
 		const oldAry = valueAry ? valueAry : [];
@@ -258,6 +279,23 @@ function Cartesian3Value(props) {
 
 	}
 
+	const getValue = () => {
+		if (valueAry === null) return '';
+		let str = '';
+		valueAry.forEach((item, index) => {
+			if (enableTimeInput) {
+				if (isUseEpoch) {
+					str += `${item[0]} ${item[1]} ${item[2]} ${item[3]}\n`;
+				} else {
+					str += `${dayjs(item[0]).format('YYYY-MM-DD HH:mm:ss')} ${item[1]} ${item[2]} ${item[3]}\n`;
+				}
+			} else {
+				str += `${item[0]} ${item[1]} ${item[2]}\n`;
+			}
+		})
+		return str;
+	}
+
 	return (
 		<div>
 			<Button onClick={(e) => {
@@ -267,6 +305,13 @@ function Cartesian3Value(props) {
 			<Button onClick={(e) => {
 				toggleEpoch()
 			}}>useEpoch {isUseEpoch ? `true` : 'false'} </Button>
+			<Button onClick={(e) => {
+				console.log(' batchInput');
+				showModal()
+			}}>batchInput </Button>
+			<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+				<TextArea value={textareaValue} />
+			</Modal>
 			{valueAry !== null && valueAry.length > 0 && ArrayItem(valueAry)}
 			{valueAry === null && <Button onClick={addNewItem}>新增</Button>}
 		</div>
