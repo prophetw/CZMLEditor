@@ -41,6 +41,18 @@ const czmlDemoKeymap = {
   path: CZMLPath,
 }
 
+const EMPTY_PACKET_ARY = [
+  {
+    id: 'document',
+    name: 'CZML Geometries: Polygon',
+    version: '1.0'
+  },
+  {
+    id: 'packet1',
+    name: 'packet title',
+  }
+]
+
 const EditorPage: React.FC = () => {
   const [formData, setFormData] = useState(null);
   const [cesiumViewer, setViewer] = useState<Cesium.Viewer | null>(null);
@@ -112,43 +124,70 @@ const EditorPage: React.FC = () => {
 
 
   useEffect(() => {
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      contextOptions: {
-        webgl: {
-          preserveDrawingBuffer: true,
-          alpha: true,
-        },
+
+    const getPacketInfoFromServer = async () => {
+      return Promise.resolve(null)
+    }
+
+    const init = async () => {
+
+
+      const packetFromServer = await getPacketInfoFromServer()
+
+      if (packetFromServer === null) {
+        // 初始化 一个空的 packet
+        const clonePakcet = JSON.parse(JSON.stringify(EMPTY_PACKET_ARY))
+        setPacketAry(clonePakcet)
+
+      } else {
+        // handle format data
+
+        setPacketAry(packetFromServer)
       }
-    });
-    const thumbView = new Cesium.Viewer("thumbnailContainer", {
-      baseLayerPicker: false, // 移除基础图层选择器
-      baseLayer: false,
-      geocoder: false, // 移除地理编码器
-      homeButton: false, // 移除主页按钮
-      sceneModePicker: false, // 移除场景模式选择器
-      timeline: false, // 移除时间轴
-      navigationHelpButton: false, // 移除帮助按钮
-      animation: false, // 移除动画控件
-      fullscreenButton: false, // 移除全屏按钮
-      vrButton: false, // 移除VR按钮
-      skyAtmosphere: false, // 移除大气效果
-      skyBox: false, // 移除天空盒
-      terrainProvider: new Cesium.EllipsoidTerrainProvider(), // 移除地形
-      contextOptions: {
-        webgl: {
-          preserveDrawingBuffer: true,
-          alpha: true,
-        },
-      }
-    });
-    thumbView.scene.globe = undefined; // 移除地球球体
-    thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
 
-    console.log(' viewer ', viewer);
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+        contextOptions: {
+          webgl: {
+            preserveDrawingBuffer: true,
+            alpha: true,
+          },
+        }
+      });
+      const thumbView = new Cesium.Viewer("thumbnailContainer", {
+        baseLayerPicker: false, // 移除基础图层选择器
+        baseLayer: false,
+        geocoder: false, // 移除地理编码器
+        homeButton: false, // 移除主页按钮
+        sceneModePicker: false, // 移除场景模式选择器
+        timeline: false, // 移除时间轴
+        navigationHelpButton: false, // 移除帮助按钮
+        animation: false, // 移除动画控件
+        fullscreenButton: false, // 移除全屏按钮
+        vrButton: false, // 移除VR按钮
+        skyAtmosphere: false, // 移除大气效果
+        skyBox: false, // 移除天空盒
+        terrainProvider: new Cesium.EllipsoidTerrainProvider(), // 移除地形
+        contextOptions: {
+          webgl: {
+            preserveDrawingBuffer: true,
+            alpha: true,
+          },
+        }
+      });
+      thumbView.scene.globe = undefined; // 移除地球球体
+      thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
+
+      console.log(' viewer ', viewer);
 
 
-    setViewer(viewer);
-    setThumbViewer(thumbView)
+      setViewer(viewer);
+      setThumbViewer(thumbView)
+
+
+    }
+
+    init()
+
     return () => {
       // viewer.dataSources.remove(dataSourcePromise);
       const container = document.getElementById('cesiumContainer')
@@ -306,11 +345,11 @@ const EditorPage: React.FC = () => {
           <Button>导出</Button>
           <Button>保存</Button>
           <Select value={curDemoName} onChange={async (value) => {
-            console.log(' value', value );
+            console.log(' value', value);
             setCurDemoName(value)
-            if(value === '选择模板'){
+            if (value === '选择模板') {
               unloadCZML()
-            }else{
+            } else {
               loadTemplate(value)
             }
           }}>

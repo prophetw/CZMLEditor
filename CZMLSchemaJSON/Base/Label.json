@@ -12,32 +12,38 @@
         },
         "text": {
             "$ref": "String.json",
-            "description": "The text displayed by the label. The newline character (\\n) indicates line breaks."
+            "description": "The text displayed by the label. The newline character (\\n) indicates line breaks.",
+            "title": "文本"
         },
         "font": {
             "$ref": "Font.json",
             "description": "The font to use for the label.",
-            "default": "30px sans-serif"
+            "default": "30px sans-serif",
+            "title": "字体"
         },
         "style": {
             "$ref": "LabelStyle.json",
             "description": "The style of the label.",
-            "default": "FILL"
+            "default": "FILL",
+            "title": "样式"
         },
         "scale": {
             "$ref": "Double.json",
             "description": "The scale of the label. The scale is multiplied with the pixel size of the label's text. For example, if the scale is 2.0, the label will be rendered with twice the number of pixels, in each direction, of the text.",
-            "default": 1.0
+            "default": 1,
+            "title": "缩放"
         },
         "showBackground": {
             "$ref": "Boolean.json",
             "description": "Whether or not a background behind the label is shown.",
-            "default": false
+            "default": false,
+            "title": "背景"
         },
         "backgroundColor": {
             "$ref": "Color.json",
             "description": "The color of the background behind the label.",
-            "default": "[0.165, 0.165, 0.165, 0.8]"
+            "default": "[0.165, 0.165, 0.165, 0.8]",
+            "title": "背景色"
         },
         "backgroundPadding": {
             "$ref": "BackgroundPadding.json",
@@ -47,7 +53,8 @@
         "pixelOffset": {
             "$ref": "PixelOffset.json",
             "description": "The offset, in viewport pixels, of the label origin from the `position`. A pixel offset is the number of pixels up and to the right to place the label, relative to the `position`.",
-            "default": "[0.0, 0.0]"
+            "default": "[0.0, 0.0]",
+            "title": "偏移量"
         },
         "eyeOffset": {
             "$ref": "EyeOffset.json",
@@ -57,12 +64,14 @@
         "horizontalOrigin": {
             "$ref": "HorizontalOrigin.json",
             "description": "The horizontal origin of the label. It controls whether the label is left-, center-, or right-aligned with the `position`.",
-            "default": "CENTER"
+            "default": "CENTER",
+            "title": "水平对齐方式"
         },
         "verticalOrigin": {
             "$ref": "VerticalOrigin.json",
             "description": "The vertical origin of the label. It controls whether the label image is bottom-, center-, or top-aligned with the `position`.",
-            "default": "CENTER"
+            "default": "CENTER",
+            "title": "垂直对齐方式"
         },
         "heightReference": {
             "$ref": "HeightReference.json",
@@ -72,21 +81,25 @@
         "fillColor": {
             "$ref": "Color.json",
             "description": "The fill color of the label.",
-            "default": "white"
+            "default": "white",
+            "title": "字体颜色"
         },
         "outlineColor": {
             "$ref": "Color.json",
             "description": "The outline color of the label.",
-            "default": "black"
+            "default": "black",
+            "title": "边线颜色"
         },
         "outlineWidth": {
             "$ref": "Double.json",
             "description": "The outline width of the label.",
-            "default": 1.0
+            "default": 1,
+            "title": "边线宽度"
         },
         "translucencyByDistance": {
             "$ref": "NearFarScalar.json",
-            "description": "How the label's translucency should change based on the label's distance from the camera. This scalar value should range from 0 to 1."
+            "description": "How the label's translucency should change based on the label's distance from the camera. This scalar value should range from 0 to 1.",
+            "title": "按距离透明度"
         },
         "pixelOffsetScaleByDistance": {
             "$ref": "NearFarScalar.json",
@@ -94,16 +107,19 @@
         },
         "scaleByDistance": {
             "$ref": "NearFarScalar.json",
-            "description": "How the label's scale should change based on the label's distance from the camera. This scalar value will be multiplied by `scale`."
+            "description": "How the label's scale should change based on the label's distance from the camera. This scalar value will be multiplied by `scale`.",
+            "title": "按距离缩放"
         },
         "distanceDisplayCondition": {
             "$ref": "DistanceDisplayCondition.json",
-            "description": "The display condition specifying the distance from the camera at which this label will be displayed."
+            "description": "The display condition specifying the distance from the camera at which this label will be displayed.",
+            "title": "按距离显示"
         },
         "disableDepthTestDistance": {
             "$ref": "Double.json",
             "description": "The distance from the camera at which to disable the depth test. This can be used to prevent clipping against terrain, for example. When set to zero, the depth test is always applied. When set to Infinity, the depth test is never applied.",
-            "default": 0.0
+            "default": 0,
+            "title": "显示层级"
         }
     }
 }
