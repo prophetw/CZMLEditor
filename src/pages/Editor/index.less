@@ -1,58 +1,65 @@
-:global{
-  body{
+:global {
+  body {
     background: #f0f2f5;
-    #root{
+    #root {
       height: 100%;
     }
   }
-  #thumbnailContainer{
-  .cesium-viewer-bottom{
-    display: none;
-  }
+  #thumbnailContainer {
+    .cesium-viewer-bottom {
+      display: none;
+    }
   }
 }
 .container {
   padding-top: 80px;
 }
-.flex{
+.flex {
   display: flex;
   height: 100%;
   position: relative;
-  > div{
-    width: 50%;
+  .tree_container {
+    width: 300px;
   }
-  .thumbnail_container{
+  .cesium_container {
+    flex: 1; /* 允许中间部分自适应宽度 */
+  }
+  .thumbnail_container {
     width: 100px;
     height: 100px;
     position: absolute;
     top: 8px;
-    left: 8px;
+    left: 308px;
     border: 1px solid white;
     box-sizing: content-box;
   }
-  .form_container{
+  .form_container {
+    width: 400px;
     padding: 40px 10px;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
   }
-  .opt_container{
+  .show_thumbnail {
     position: absolute;
-    top: 0px;
+    bottom: 0;
+    right: 408px;
+    top: 50%;
+    height: 200px;
+    width: 200px;
+    background: white;
+  }
+  .opt_container {
     background-color: white;
-    z-index: 99;
-    width: 100%;
     min-height: 30px;
     line-height: 30px;
-    left: 0;
     padding: 0 10px;
-
   }
-  .packet_item{
+  .packet_item {
     padding: 0 20px;
   }
-  .packet_item_keys{
+  .packet_item_keys {
     padding: 0 20px;
   }
 }

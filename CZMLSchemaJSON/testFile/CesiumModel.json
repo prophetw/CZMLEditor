@@ -15,7 +15,7 @@
       ]
     },
     "model": {
-      "gltf": "http://localhost:8000/car1.glb",
+      "gltf": "/car1.glb",
       "scale": 2,
       "minimumPixelSize": 128
     }

@@ -28,6 +28,7 @@ const uiSchema = CZMLUISchema
 const DEFAULT_KEY = 'billboard'
 
 const czmlDemoKeymap = {
+  "选择模板": "",
   model: CZMLModel,
   billboard: CZMLBillboardAndLabel,
   rectangle: CZMLRectangle,
@@ -49,7 +50,7 @@ const EditorPage: React.FC = () => {
   const [editKey, setEditKey] = useState(DEFAULT_KEY)
   const [formSchema, setFormSchema] = useState<any>(null)
   const [curEditPacket, setCurPacket] = useState<any>(null)
-  const [curDemoName, setCurDemoName] = useState('billboard')
+  const [curDemoName, setCurDemoName] = useState('选择模板')
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
 
   const setForm = (e) => {
@@ -144,25 +145,10 @@ const EditorPage: React.FC = () => {
     thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
 
     console.log(' viewer ', viewer);
-    // @ts-ignore
-    const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
-    console.log(' czml ', czml);
 
-    if (viewer) {
-      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-      viewer.dataSources.add(dataSourcePromise);
-      viewer.zoomTo(dataSourcePromise);
-    }
-
-    if (thumbView) {
-      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-      thumbView.dataSources.add(dataSourcePromise);
-      thumbView.zoomTo(dataSourcePromise);
-    }
 
     setViewer(viewer);
     setThumbViewer(thumbView)
-    setPacketAry(czml)
     return () => {
       // viewer.dataSources.remove(dataSourcePromise);
       const container = document.getElementById('cesiumContainer')
@@ -175,6 +161,51 @@ const EditorPage: React.FC = () => {
       }
     }
   }, [])
+
+  const unloadCZML = () => {
+    if (cesiumViewer) {
+      cesiumViewer.dataSources.removeAll()
+    }
+    if (thumbnailViewer) {
+      thumbnailViewer.dataSources.removeAll()
+    }
+    setPacketAry(null)
+    setFormData(null)
+  }
+
+  const loadCZML = async (czml: any) => {
+    // @ts-ignore
+    // const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
+    console.log(' czml ', czml);
+    unloadCZML()
+
+    if (cesiumViewer) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      await cesiumViewer.dataSources.add(dataSourcePromise);
+      const path = cesiumViewer.dataSources._dataSources[0].entities.getById('path')
+      console.log(' path ', path);
+      cesiumViewer.zoomTo(dataSourcePromise);
+
+      if (path) {
+        cesiumViewer.trackedEntity = path
+      }
+    }
+    if (thumbnailViewer) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      await thumbnailViewer.dataSources.add(dataSourcePromise);
+      thumbnailViewer.zoomTo(dataSourcePromise);
+    }
+
+    // list need this 
+    setPacketAry(czml)
+  }
+
+  const loadTemplate = async (value: string) => {
+    // @ts-ignore
+    const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[value]));
+    loadCZML(czml)
+  }
+
 
   const togglePacket = () => {
     console.log(packetAry);
@@ -204,16 +235,6 @@ const EditorPage: React.FC = () => {
       version: '1.0'
     }
     packetAry.push(newPacket)
-    setPacketAry([...packetAry])
-  }
-
-  const addBillboardToPacket = (packet: any) => {
-    const newPacket = {
-      id: 'billboard',
-      name: 'CZML Geometries: Polygon',
-      version: '1.0'
-    }
-    packet.push(newPacket)
     setPacketAry([...packetAry])
   }
 
@@ -272,50 +293,43 @@ const EditorPage: React.FC = () => {
   return (
     <>
       <div className={styles.flex}>
-        <div id="cesiumContainer">
+        <div className={styles.tree_container}>
+          <Button onClick={addPacket}>新增Packet</Button>
+          <Button onClick={addPacket}>InitPacket</Button>
+          <Button onClick={() => {
+            console.log(' ');
+          }}>新增PacketNode</Button>
+          <Button onClick={() => {
+            console.log(' ');
+          }}>删除</Button>
+          <Button>导入</Button>
+          <Button>导出</Button>
+          <Button>保存</Button>
+          <Select value={curDemoName} onChange={async (value) => {
+            console.log(' value', value );
+            setCurDemoName(value)
+            if(value === '选择模板'){
+              unloadCZML()
+            }else{
+              loadTemplate(value)
+            }
+          }}>
+            {Object.keys(czmlDemoKeymap).map((key) => {
+              return <Select.Option key={key} value={key}>{key}</Select.Option>
+            })}
+          </Select>
+
+          <div className={styles.packet_list}>
+            <div className={styles.opt_container}>
+              <span onClick={togglePacket}>Packet struct toggle</span>
+              {packetAry && renderPacketSchema(packetAry)}
+            </div>
+          </div>
+
+        </div>
+        <div className={styles.cesium_container} id="cesiumContainer">
         </div>
         <div className={styles.form_container}>
-          <div className={styles.opt_container}>
-            <span onClick={togglePacket}>Packet struct toggle</span>
-            {packetAry && renderPacketSchema(packetAry)}
-
-            <Select style={{
-              position: 'absolute',
-              width: 200,
-              right: 0,
-              top: 0,
-            }} value={curDemoName} onChange={async (value) => {
-              console.log(value);
-              setCurDemoName(value)
-              // @ts-ignore
-              const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[value]));
-              console.log(' new czml demo', czml);
-              setPacketAry(czml)
-              if (cesiumViewer) {
-                cesiumViewer.dataSources.removeAll()
-                const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-                await cesiumViewer.dataSources.add(dataSourcePromise);
-                const path = cesiumViewer.dataSources._dataSources[0].entities.getById('path')
-                console.log(' path ', path);
-                cesiumViewer.zoomTo(dataSourcePromise);
-
-                if (path) {
-                  cesiumViewer.trackedEntity = path
-                }
-              }
-              if (thumbnailViewer) {
-                thumbnailViewer.dataSources.removeAll()
-                const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-                await thumbnailViewer.dataSources.add(dataSourcePromise);
-                thumbnailViewer.zoomTo(dataSourcePromise);
-              }
-            }}>
-              {Object.keys(czmlDemoKeymap).map((key) => {
-                return <Select.Option key={key} value={key}>{key}</Select.Option>
-              })}
-            </Select>
-
-          </div>
           {formData &&
             <Form
               formContext={{
@@ -337,15 +351,7 @@ const EditorPage: React.FC = () => {
         </div>
         <div id="thumbnailContainer" className={styles.thumbnail_container}>
         </div>
-        <div style={{
-          position: "absolute",
-          bottom: 0,
-          right: '50%',
-          top: '50%',
-          height: "200px",
-          width: "200px",
-          background: "white"
-        }}>
+        <div className={styles.show_thumbnail}>
           <Button onClick={() => {
             getThumbnail()
           }}>getThumbnail</Button>

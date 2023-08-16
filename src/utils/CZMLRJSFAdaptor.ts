@@ -12,6 +12,7 @@ import PositionJSONSchema from '../../CZMLSchemaJSON/Base/Position.json'
 import PathJSONSchema from '../../CZMLSchemaJSON/Base/Path.json'
 import CZMLDefinitions from './CZMLDefinitions';
 
+// original czml jsonSchema 
 const BaseJSONSchemaObj = {
   billboard: BillboardJSONSchema,
   label: LabelJSONSchema,
