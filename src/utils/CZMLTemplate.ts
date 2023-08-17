@@ -5,12 +5,12 @@ const billboardTemplate =
 }
 
 
-const clockTemplate =
-{
-	"currentTime": "2021-01-01T00:00:00Z",
-	"multiplier": 20,
+const clockTemplate = {
+	"interval": "2023-01-01T00:00:00Z/2023-01-01T00:10:00Z",
+	"currentTime": "2023-01-01T00:00:00Z",
+	"multiplier": 60,
 	"range": "LOOP_STOP",
-	"step": "SYSTEM_CLOCK_MULTIPLIER",
+	"step": "SYSTEM_CLOCK_MULTIPLIER"
 }
 
 
@@ -21,14 +21,16 @@ const labelTemplate = {
 // packet[1].billboard = billboardTemplate[0]
 
 const polylineTemplate = {
-	"positions": [
-		-75.59777,
-		40.03883,
-		0,
-		-75.59776,
-		40.03883,
-		0,
-	]
+	"positions": {
+		cartographicDegrees: [
+			121.59777,
+			31.03883,
+			0,
+			121.59776,
+			31.03883,
+			0,
+		]
+	}
 }
 
 const pointTemplate = {
@@ -54,7 +56,7 @@ const pointTemplate = {
 }
 
 const modelTemplate = {
-	"uri": "/car1.glb",
+	"gltf": "/car1.glb",
 	"minimumPixelSize": 128,
 	"maximumScale": 20000,
 }

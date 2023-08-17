@@ -64,14 +64,28 @@ const EditorPage: React.FC = () => {
   const locatePacket = () => {
     if (cesiumViewer) {
       const dataSources = cesiumViewer.dataSources._dataSources[0]
-      console.log(' locate ');
+      console.log(' locate ', cesiumViewer, dataSources);
       if (dataSources) {
         cesiumViewer.zoomTo(dataSources)
       }
     }
   }
 
-  const addPacketNode = (nodeName: KeyOfTemplate) => {
+  const reloadCZML = async (czml) => {
+    // if change czml , reload it
+    if (cesiumViewer) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      cesiumViewer.dataSources.removeAll()
+      await cesiumViewer.dataSources.add(dataSourcePromise);
+    }
+    if (thumbnailViewer) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      thumbnailViewer.dataSources.removeAll()
+      await thumbnailViewer.dataSources.add(dataSourcePromise);
+    }
+  }
+
+  const addPacketNode = async (nodeName: KeyOfTemplate) => {
 
     // TODO: packetAry may be null 
 
@@ -104,6 +118,8 @@ const EditorPage: React.FC = () => {
 
     // update UI 
     setPacketAry([...packetAry])
+    await reloadCZML(packetAry)
+
     locatePacket()
   }
 
@@ -135,16 +151,7 @@ const EditorPage: React.FC = () => {
     console.log(' curFormData ---- ', e.formData);
     setFormData(e.formData)
     curEditPacket[editKey] = e.formData
-    if (cesiumViewer) {
-      const dataSourcePromise = Cesium.CzmlDataSource.load(packetAry);
-      cesiumViewer.dataSources.removeAll()
-      cesiumViewer.dataSources.add(dataSourcePromise);
-    }
-    if (thumbnailViewer) {
-      const dataSourcePromise = Cesium.CzmlDataSource.load(packetAry);
-      thumbnailViewer.dataSources.removeAll()
-      thumbnailViewer.dataSources.add(dataSourcePromise);
-    }
+    reloadCZML(packetAry)
   }
 
   const getTreeFromCZML = (packetArray: any) => {
@@ -188,40 +195,43 @@ const EditorPage: React.FC = () => {
     setFormSchema(schema)
   }
 
-  const unloadCZML = () => {
-    if (cesiumViewer) {
-      cesiumViewer.dataSources.removeAll()
+  const unloadCZML = (viewer: Cesium.Viewer | undefined, thumbViewer: Cesium.Viewer | undefined) => {
+    let viewer1 = viewer || cesiumViewer
+    let viewer2 = thumbViewer || thumbnailViewer
+    if (viewer1) {
+      viewer1.dataSources.removeAll()
     }
-    if (thumbnailViewer) {
-      thumbnailViewer.dataSources.removeAll()
+    if (viewer2) {
+      viewer2.dataSources.removeAll()
     }
     const emptyPacketAry = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
     setPacketAry(emptyPacketAry)
     setFormData(null)
   }
 
-  const loadCZML = async (czml: any, viewer = undefined, thumbViewer = undefined) => {
+  const loadCZML = async (czml: any, viewer: Cesium.Viewer | undefined, thumbViewer: Cesium.Viewer | undefined) => {
     // @ts-ignore
     // const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
     console.log(' czml ', czml, viewer, thumbViewer);
-    unloadCZML()
+    unloadCZML(viewer, thumbViewer)
     let viewer1 = viewer || cesiumViewer
     let viewer2 = thumbViewer || thumbnailViewer
 
     if (viewer1) {
-      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-      await viewer1.dataSources.add(dataSourcePromise);
-      const path = viewer1.dataSources._dataSources[0].entities.getById('path')
-      console.log(' path ', path);
+      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+      viewer1.dataSources.add(dataSourcePromise);
       viewer1.zoomTo(dataSourcePromise);
 
-      if (path) {
-        viewer1.trackedEntity = path
-      }
+      // this is for track path feature
+      // const path = viewer1.dataSources._dataSources[0].entities.getById('path')
+      // console.log(' path ', path);
+      // if (path) {
+      //   viewer1.trackedEntity = path
+      // }
     }
     if (viewer2) {
-      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-      await viewer2.dataSources.add(dataSourcePromise);
+      const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+      viewer2.dataSources.add(dataSourcePromise);
       viewer2.zoomTo(dataSourcePromise);
     }
 
@@ -240,15 +250,15 @@ const EditorPage: React.FC = () => {
 
 
       const packetFromServer = await getPacketInfoFromServer()
-      let curPacketAry = packetFromServer
+      let initedPacketAry = packetFromServer
 
       if (packetFromServer === null) {
         // 初始化 一个空的 packet
         const clonePakcet = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
-        curPacketAry = clonePakcet
+        initedPacketAry = clonePakcet
 
       } 
-      setPacketAry(curPacketAry)
+      // setPacketAry(initedPacketAry)
 
       const viewer = new Cesium.Viewer("cesiumContainer", {
         contextOptions: {
@@ -281,8 +291,8 @@ const EditorPage: React.FC = () => {
       });
       thumbView.scene.globe = undefined; // 移除地球球体
       thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
-      if(curPacketAry){
-        await loadCZML(curPacketAry, viewer, thumbView)
+      if(initedPacketAry){
+        loadCZML(initedPacketAry, viewer, thumbView)
       }
 
       console.log(' viewer ', viewer);
@@ -447,8 +457,8 @@ const EditorPage: React.FC = () => {
               validator={validator}
               uiSchema={uiSchema}
               experimental_defaultFormStateBehavior={{
-                // emptyObjectFields: 'skipDefaults',
-                emptyObjectFields: 'populateRequiredDefaults',
+                emptyObjectFields: 'skipDefaults',
+                // emptyObjectFields: 'populateRequiredDefaults',
                 // emptyObjectFields: 'populateAllDefaults' // this is  default config
               }}
             />}
