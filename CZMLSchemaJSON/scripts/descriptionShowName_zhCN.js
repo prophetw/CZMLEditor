@@ -1,6 +1,5 @@
 module.exports = {
-	billboard:
-	{
+	billboard: {
 		image: "图片",
 		scale: "缩放",
 		pixelOffset: "偏移量",
@@ -14,8 +13,7 @@ module.exports = {
 		distanceDisplayCondition: "按距离显示",
 		disableDepthTestDistance: "显示层级",
 	},
-	model:
-	{
+	model: {
 		gltf: "模型",
 		scale: "缩放",
 		minimumPixelSize: "最小尺寸",
@@ -28,8 +26,7 @@ module.exports = {
 		colorBlendAmount: "颜色混合权重",
 		distanceDisplayCondition: "按距离显示",
 	},
-	label:
-	{
+	label: {
 		text: "文本",
 		font: "字体",
 		style: "样式",
@@ -47,8 +44,7 @@ module.exports = {
 		distanceDisplayCondition: "按距离显示",
 		disableDepthTestDistance: "显示层级",
 	},
-	point:
-	{
+	point: {
 		pixelSize: "大小",
 		color: "颜色",
 		outlineColor: "外边线颜色",
@@ -58,8 +54,7 @@ module.exports = {
 		distanceDisplayCondition: "按距离显示",
 		disableDepthTestDistance: "显示层级",
 	},
-	polyline:
-	{
+	polyline: {
 		positions: "端点",
 		width: "线宽",
 		material: "材质",

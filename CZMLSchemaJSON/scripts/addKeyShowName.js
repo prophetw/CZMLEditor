@@ -1,7 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 
-const KeyShowNameMap = require('./keyShowName')
+// use zh-CN
+const KeyShowNameMap = require('./keyShowName_zhCN')
+
+// use en-US
+// const KeyShowNameMap = require('./keyShowName_enUS')
 
 const CZMLJSONSchemaPath = path.resolve(__dirname, '../Base')
 

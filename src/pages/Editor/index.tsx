@@ -30,7 +30,7 @@ const uiSchema = CZMLUISchema
 const DEFAULT_KEY = 'billboard'
 
 const czmlDemoKeymap = {
-  "选择模板": "",
+  "ChooseTemplate": "",
   model: CZMLModel,
   billboard: CZMLBillboardAndLabel,
   rectangle: CZMLRectangle,
@@ -55,7 +55,7 @@ const EditorPage: React.FC = () => {
   const [editKey, setEditKey] = useState(DEFAULT_KEY)
   const [formSchema, setFormSchema] = useState<any>(null)
   const [curEditPacket, setCurPacket] = useState<any>(null)
-  const [curDemoName, setCurDemoName] = useState('选择模板')
+  const [curDemoName, setCurDemoName] = useState('ChooseTemplate')
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
   const [curSelectPacket, setCurSelectPacket] = useState<any>(null)
 
@@ -195,7 +195,7 @@ const EditorPage: React.FC = () => {
     setFormSchema(schema)
   }
 
-  const unloadCZML = (viewer: Cesium.Viewer | undefined, thumbViewer: Cesium.Viewer | undefined) => {
+  const unloadCZML = (viewer = undefined, thumbViewer = undefined) => {
     let viewer1 = viewer || cesiumViewer
     let viewer2 = thumbViewer || thumbnailViewer
     if (viewer1) {
@@ -409,20 +409,20 @@ const EditorPage: React.FC = () => {
     <>
       <div className={styles.flex}>
         <div className={styles.tree_container}>
-          <Button onClick={addPacket}>新增Packet</Button>
+          <Button onClick={addPacket}>addPacket</Button>
           <Dropdown menu={{ items: PacketNodeList }} trigger={['click']}>
-            <Button>新增节点</Button>
+            <Button>addPacketNode</Button>
           </Dropdown>
           <Button onClick={() => {
             console.log(' ');
-          }}>删除</Button>
-          <Button>导入</Button>
-          <Button onClick={exportJSON}>导出</Button>
-          <Button>保存</Button>
+          }}>delete</Button>
+          <Button>Import</Button>
+          <Button onClick={exportJSON}>Export</Button>
+          <Button>Save</Button>
           <Select value={curDemoName} onChange={async (value) => {
             console.log(' value', value);
             setCurDemoName(value)
-            if (value === '选择模板') {
+            if (value === 'ChooseTemplate') {
               unloadCZML()
             } else {
               loadTemplate(value)
@@ -470,7 +470,7 @@ const EditorPage: React.FC = () => {
             getThumbnail()
           }}>getThumbnail</Button>
           {thumbnailDataUrl && <img style={{ border: "1px solid #666" }} src={thumbnailDataUrl} alt="" />}
-          <Button onClick={locatePacket}>定位</Button>
+          <Button onClick={locatePacket}>Locate</Button>
         </div>
       </div>
 
