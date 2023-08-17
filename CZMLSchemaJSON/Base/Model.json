@@ -14,24 +14,24 @@
             "$ref": "Uri.json",
             "description": "The URI of a <a href=\"https://github.com/KhronosGroup/glTF\">glTF</a> model. For broadest client compatibility, the URI should be accessible via Cross-Origin Resource Sharing (CORS). The URI may also be a <a href=\"https://developer.mozilla.org/en/data_URIs\">data URI</a>.",
             "czmlRequiredForDisplay": true,
-            "title": "模型"
+            "title": "Model"
         },
         "scale": {
             "$ref": "Double.json",
             "description": "The scale of the model.",
             "default": 1,
-            "title": "缩放"
+            "title": "Scale"
         },
         "minimumPixelSize": {
             "$ref": "Double.json",
             "description": "The approximate minimum pixel size of the model regardless of zoom.",
             "default": 0,
-            "title": "最小尺寸"
+            "title": "Minimum Pixel Size"
         },
         "maximumScale": {
             "$ref": "Double.json",
             "description": "The maximum scale size of the model. This is used as an upper limit for `minimumPixelSize`.",
-            "title": "最大比例"
+            "title": "Maximum Scale"
         },
         "incrementallyLoadTextures": {
             "$ref": "Boolean.json",
@@ -42,7 +42,7 @@
             "$ref": "Boolean.json",
             "description": "Whether or not to run all animations defined in the glTF model.",
             "default": true,
-            "title": "动画播放"
+            "title": "Run Animations"
         },
         "shadows": {
             "$ref": "ShadowMode.json",
@@ -57,35 +57,35 @@
         "silhouetteColor": {
             "$ref": "Color.json",
             "description": "The color of the silhouette drawn around the model.",
-            "title": "外轮廓颜色"
+            "title": "Silhouette Color"
         },
         "silhouetteSize": {
             "$ref": "Double.json",
             "description": "The size, in pixels, of the silhouette drawn around the model.",
             "default": 0,
-            "title": "外轮廓大小"
+            "title": "Silhouette Size"
         },
         "color": {
             "$ref": "Color.json",
             "description": "The color to blend with the model's rendered color.",
-            "title": "颜色"
+            "title": "Color"
         },
         "colorBlendMode": {
             "$ref": "ColorBlendMode.json",
             "description": "The mode to use for blending between `color` and the model's color.",
             "default": "HIGHLIGHT",
-            "title": "颜色混合模式"
+            "title": "Color Blend Mode"
         },
         "colorBlendAmount": {
             "$ref": "Double.json",
             "description": "The color strength when `colorBlendMode` is `MIX`. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.",
             "default": 0.5,
-            "title": "颜色混合权重"
+            "title": "Color Blend Amount"
         },
         "distanceDisplayCondition": {
             "$ref": "DistanceDisplayCondition.json",
             "description": "The display condition specifying at what distance from the camera this model will be displayed.",
-            "title": "按距离显示"
+            "title": "Distance Display Condition"
         },
         "nodeTransformations": {
             "$ref": "NodeTransformations.json",

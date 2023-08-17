@@ -1,11 +1,22 @@
 const fs = require('fs')
 const path = require('path')
 
-// use zh-CN
-const KeyShowNameMap = require('./keyShowName_zhCN')
+const cmdArgs = process.argv 
 
-// use en-US
-// const KeyShowNameMap = require('./keyShowName_enUS')
+let lang = cmdArgs[2]
+
+const validLangAry = [
+	'en-US',
+	'zh-CN'
+]
+if(validLangAry.indexOf(lang) ===-1){
+	lang = validLangAry[0]
+}
+
+lang = lang.replace('-', '');
+
+const KeyShowNameMap = require(`./keyShowName_${lang}`)
+
 
 const CZMLJSONSchemaPath = path.resolve(__dirname, '../Base')
 

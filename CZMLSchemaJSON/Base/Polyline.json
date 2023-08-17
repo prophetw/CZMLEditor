@@ -14,7 +14,7 @@
             "$ref": "PositionList.json",
             "description": "The array of positions defining the polyline as a line strip.",
             "czmlRequiredForDisplay": true,
-            "title": "端点"
+            "title": "Positions"
         },
         "arcType": {
             "$ref": "ArcType.json",
@@ -25,7 +25,7 @@
             "$ref": "Double.json",
             "description": "The width of the polyline.",
             "default": 1,
-            "title": "线宽"
+            "title": "Width"
         },
         "granularity": {
             "$ref": "Double.json",
@@ -46,7 +46,7 @@
                     }
                 }
             },
-            "title": "材质"
+            "title": "Material"
         },
         "shadows": {
             "$ref": "ShadowMode.json",
@@ -59,7 +59,7 @@
         "distanceDisplayCondition": {
             "$ref": "DistanceDisplayCondition.json",
             "description": "The display condition specifying at what distance from the camera this polyline will be displayed.",
-            "title": "按距离显示"
+            "title": "Distance Display Condition"
         },
         "clampToGround": {
             "$ref": "Boolean.json",

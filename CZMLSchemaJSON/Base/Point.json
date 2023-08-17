@@ -14,7 +14,7 @@
             "$ref": "Double.json",
             "description": "The size of the point, in pixels.",
             "default": 1,
-            "title": "大小"
+            "title": "Pixel Size"
         },
         "heightReference": {
             "$ref": "HeightReference.json",
@@ -25,40 +25,40 @@
             "$ref": "Color.json",
             "description": "The color of the point.",
             "default": "white",
-            "title": "颜色"
+            "title": "Color"
         },
         "outlineColor": {
             "$ref": "Color.json",
             "description": "The color of the outline of the point.",
             "default": "black",
-            "title": "外边线颜色"
+            "title": "Outline Color"
         },
         "outlineWidth": {
             "$ref": "Double.json",
             "description": "The width of the outline of the point.",
             "default": 0,
-            "title": "外边线宽度"
+            "title": "Outline Width"
         },
         "scaleByDistance": {
             "$ref": "NearFarScalar.json",
             "description": "How the point's scale should change based on the point's distance from the camera. This scalar value will be multiplied by `pixelSize`.",
-            "title": "按距离缩放"
+            "title": "Scale By Distance"
         },
         "translucencyByDistance": {
             "$ref": "NearFarScalar.json",
             "description": "How the point's translucency should change based on the point's distance from the camera. This scalar value should range from 0 to 1.",
-            "title": "按距离透明度"
+            "title": "Translucency By Distance"
         },
         "distanceDisplayCondition": {
             "$ref": "DistanceDisplayCondition.json",
             "description": "The display condition specifying the distance from the camera at which this point will be displayed.",
-            "title": "按距离显示"
+            "title": "Distance Display Condition"
         },
         "disableDepthTestDistance": {
             "$ref": "Double.json",
             "description": "The distance from the camera at which to disable the depth test. This can be used to prevent clipping against terrain, for example. When set to zero, the depth test is always applied. When set to Infinity, the depth test is never applied.",
             "default": 0,
-            "title": "显示层级"
+            "title": "Disable Depth Test Distance"
         }
     }
 }

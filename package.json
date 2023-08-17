@@ -4,6 +4,9 @@
   "scripts": {
     "dev": "max dev",
     "build": "max build",
+    "build:enUS": "pnpm generatei18n_enUS && max build",
+    "i18n_enUS": "node ./CZMLSchemaJSON/scripts/addKeyShowName.js en-US",
+    "i18n_zhCN": "node ./CZMLSchemaJSON/scripts/addKeyShowName.js zh-CN",
     "format": "prettier --cache --write .",
     "prepare": "husky install",
     "postinstall": "max setup",
