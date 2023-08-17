@@ -4,6 +4,11 @@ const billboardTemplate =
 	"scale": 1.5
 }
 
+const positionTemplate = {
+	cartographicDegrees: [
+		121, 31, 2
+	]
+}
 
 const clockTemplate = {
 	"interval": "2023-01-01T00:00:00Z/2023-01-01T00:10:00Z",
@@ -15,7 +20,7 @@ const clockTemplate = {
 
 
 const labelTemplate = {
-	"text": "这个是文字",
+	"text": "11235813 Lorem 你好",
 }
 // packet[1].label = labelTemplate[0]
 // packet[1].billboard = billboardTemplate[0]
@@ -65,12 +70,12 @@ const ALL_TEMPLATE = Object.freeze({
 	EMPTY_PACKET_ARY: [
 		{
 			id: 'document',
-			name: 'CZML Geometries: Polygon',
+			name: 'CZML Template',
 			version: '1.0'
 		},
 		{
 			id: 'packet1',
-			name: 'packet title',
+			name: 'Packet title',
 			position: {
 				cartographicDegrees: [121, 31, 22]
 			},
@@ -93,6 +98,7 @@ const ALL_TEMPLATE = Object.freeze({
 	polyline: polylineTemplate,
 	clock: clockTemplate,
 	point: pointTemplate,
+	position: positionTemplate,
 })
 
 

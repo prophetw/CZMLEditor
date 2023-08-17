@@ -1,5 +1,5 @@
 import Form from '@rjsf/antd';
-import { Button, Dropdown, Select, message } from 'antd';
+import { Button, Dropdown, Input, Modal, Select, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { RJSFSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
@@ -24,6 +24,9 @@ import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 import { uiSchema as CZMLUISchema } from '@/utils/CZMLUISchema';
 import { CZMLCustomWidgets } from '@/utils/CZMLWidgets';
 import { ALL_TEMPLATE } from '../../utils/CZMLTemplate';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { generateGUID } from '@/utils/Utils';
+
 const widgets = CZMLCustomWidgets
 const uiSchema = CZMLUISchema
 
@@ -45,19 +48,26 @@ const czmlDemoKeymap = {
 
 const ALL_DEFAULT_TEMPLATE = ALL_TEMPLATE
 type KeyOfTemplate = keyof typeof ALL_DEFAULT_TEMPLATE
+const dependOnPositionPropsAry = [
+  'billboard',
+  'label',
+  'point',
+  'model',
+]
 
 const EditorPage: React.FC = () => {
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState(null); // rsjf form data
+  const [formSchema, setFormSchema] = useState<any>(null) // rsjf form schema
+
   const [cesiumViewer, setViewer] = useState<Cesium.Viewer | null>(null);
   const [thumbnailViewer, setThumbViewer] = useState<Cesium.Viewer | null>(null);
-  const [expandPacket, setExpandPacket] = useState(false)
-  const [packetAry, setPacketAry] = useState<any>(null)
-  const [editKey, setEditKey] = useState(DEFAULT_KEY)
-  const [formSchema, setFormSchema] = useState<any>(null)
-  const [curEditPacket, setCurPacket] = useState<any>(null)
-  const [curDemoName, setCurDemoName] = useState('ChooseTemplate')
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
-  const [curSelectPacket, setCurSelectPacket] = useState<any>(null)
+
+  const [packetAry, setPacketAry] = useState<any>(null) // czml packet array
+  const [curDemoName, setCurDemoName] = useState('ChooseTemplate') // czml template
+  const [expandPacket, setExpandPacket] = useState(false) // tree expand czml packet
+  const [curSelectPacket, setCurSelectPacket] = useState<any>(null) // cur select packet in czml
+  const [editKey, setEditKey] = useState(DEFAULT_KEY) // cur eidt key like "billboard" in curSelectPacket
 
 
 
@@ -85,10 +95,31 @@ const EditorPage: React.FC = () => {
     }
   }
 
+  const automaticAddPositionIfDependOnPosition = (nodeName: string) => {
+    if (curSelectPacket) {
+      if (!curSelectPacket.position) {
+        message.warning(`${nodeName} depends on position, add position automatically`)
+        curSelectPacket.position = ALL_DEFAULT_TEMPLATE['position']
+      }
+    } else {
+      if (packetAry) {
+        const targetPacket = packetAry[1]
+        if (!targetPacket.position) {
+          message.warning(`${nodeName} depends on position, add position automatically`)
+          targetPacket.position = ALL_DEFAULT_TEMPLATE['position']
+        }
+      } else {
+      }
+    }
+  }
+
   const addPacketNode = async (nodeName: KeyOfTemplate) => {
 
     // TODO: packetAry may be null 
-
+    if(dependOnPositionPropsAry.includes(nodeName)) {
+      automaticAddPositionIfDependOnPosition(nodeName)
+    }
+    
     console.log(' hall ');
     if (curSelectPacket) {
       if (curSelectPacket === packetAry[0]) {
@@ -110,9 +141,9 @@ const EditorPage: React.FC = () => {
         targetPacket[nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
       } else {
         // TODO: better never go this 
-        const newPacketAry = {...ALL_DEFAULT_TEMPLATE['EMPTY_PACKET_ARY']};
+        const newPacketAry = { ...ALL_DEFAULT_TEMPLATE['EMPTY_PACKET_ARY'] };
         newPacketAry[1][nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
-        setPacketAry({...newPacketAry})
+        setPacketAry({ ...newPacketAry })
       }
     }
 
@@ -126,23 +157,23 @@ const EditorPage: React.FC = () => {
   const PacketNodeList: MenuProps['items'] = [
     {
       key: 'billboard',
-      label: (<a onClick={() => { addPacketNode('billboard') }}>图片</a>), // this is the show name in the form
+      label: (<a onClick={() => { addPacketNode('billboard') }}>billboard</a>), // this is the show name in the form
     },
     {
       key: 'label',
-      label: (<a onClick={() => { addPacketNode('label') }}>文字</a>), // this is the show name in the form
+      label: (<a onClick={() => { addPacketNode('label') }}>label</a>), // this is the show name in the form
     },
     {
       key: 'model',
-      label: (<a onClick={() => { addPacketNode('model') }}>gltf模型</a>), // this is the show name in the form
+      label: (<a onClick={() => { addPacketNode('model') }}>gltf model</a>), // this is the show name in the form
     },
     {
       key: 'point',
-      label: (<a onClick={() => { addPacketNode('point') }}>点</a>), // this is the show name in the form
+      label: (<a onClick={() => { addPacketNode('point') }}>point</a>), // this is the show name in the form
     },
     {
       key: 'polyline',
-      label: (<a onClick={() => { addPacketNode('polyline') }}>线</a>), // this is the show name in the form
+      label: (<a onClick={() => { addPacketNode('polyline') }}>polyline</a>), // this is the show name in the form
     },
   ]
 
@@ -150,7 +181,7 @@ const EditorPage: React.FC = () => {
   const setForm = (e) => {
     console.log(' curFormData ---- ', e.formData);
     setFormData(e.formData)
-    curEditPacket[editKey] = e.formData
+    curSelectPacket[editKey] = e.formData
     reloadCZML(packetAry)
   }
 
@@ -209,7 +240,7 @@ const EditorPage: React.FC = () => {
     setFormData(null)
   }
 
-  const loadCZML = async (czml: any, viewer: Cesium.Viewer | undefined, thumbViewer: Cesium.Viewer | undefined) => {
+  const loadCZML = async (czml: any, viewer = undefined, thumbViewer = undefined) => {
     // @ts-ignore
     // const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
     console.log(' czml ', czml, viewer, thumbViewer);
@@ -257,7 +288,7 @@ const EditorPage: React.FC = () => {
         const clonePakcet = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
         initedPacketAry = clonePakcet
 
-      } 
+      }
       // setPacketAry(initedPacketAry)
 
       const viewer = new Cesium.Viewer("cesiumContainer", {
@@ -291,7 +322,7 @@ const EditorPage: React.FC = () => {
       });
       thumbView.scene.globe = undefined; // 移除地球球体
       thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
-      if(initedPacketAry){
+      if (initedPacketAry) {
         loadCZML(initedPacketAry, viewer, thumbView)
       }
 
@@ -319,12 +350,15 @@ const EditorPage: React.FC = () => {
 
   const addPacket = () => {
     if (packetAry) {
-      packetAry.push(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET)
+      const clonePacket = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET));
+      clonePacket.id = generateGUID();
+      console.log(ALL_DEFAULT_TEMPLATE);
+      packetAry.push(clonePacket)
       setPacketAry([...packetAry])
     } else {
-      const clonePakcet = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
-      clonePakcet.push(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET)
-      setPacketAry(clonePakcet)
+      const clonePacket = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
+      clonePacket.push(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET)
+      setPacketAry(clonePacket)
     }
   }
 
@@ -341,26 +375,97 @@ const EditorPage: React.FC = () => {
     getThumbnail()
   }
 
-  const expandPacketItem = (item) => {
-    console.log(' haha ');
-    item.expand = !item.expand
-    setPacketAry([...packetAry])
-  }
-
   const edit = (item, key) => {
     setFormData(null)
     setTimeout(() => {
       setEditKey(key);
       initSchema(key);
-      setCurPacket(item)
+      setCurSelectPacket(item)
       console.log(' item key ', item, key);
       console.log(' curForm ', item[key]);
       setFormData(item[key])
     })
   }
 
+  const unEdit = () => {
+    setEditKey('')
+    setFormData(null)
+  }
+
+  const expandPacketItem = (item) => {
+    console.log(' haha ');
+    item.expand = !item.expand
+    setCurSelectPacket(item);
+    unEdit()
+    setPacketAry([...packetAry])
+  }
+
+
   const exportJSON = () => {
+    message.success('check the console')
     console.log(' packetAry === ', JSON.stringify(packetAry, null, 2));
+  }
+
+  const deleteItem = () => {
+
+    if (editKey && curSelectPacket) {
+      const curPacketNode = curSelectPacket[editKey]
+      if (curPacketNode) {
+        // is deletable
+        const isDeletable = editKey !== 'position'
+        if (isDeletable) {
+          Modal.confirm({
+            title: 'Are you sure delete this Packet Node?',
+            icon: <ExclamationCircleFilled />,
+            content: `Packet Node ${editKey} will be deleted`,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+              delete curSelectPacket[editKey]
+              // setCurSelectPacket(curSelectPacket)
+              reloadCZML(packetAry)
+              setPacketAry([...packetAry])
+              unEdit()
+            }
+          });
+        }else{
+          message.error('can not delete packet node position')
+        }
+      }
+    }
+
+    if (!editKey && curSelectPacket) {
+      if(curSelectPacket){
+        console.log(' hello ');
+        const index = packetAry.indexOf(curSelectPacket)
+        if(index>-1){
+          const isDeletable = (index !== 0 && index !== 1)
+          if(isDeletable){
+            Modal.confirm({
+              title: 'Are you sure delete this Packet?',
+              icon: <ExclamationCircleFilled />,
+              content: `Packet ${index} will be deleted`,
+              okText: 'Yes',
+              okType: 'danger',
+              cancelText: 'No',
+              onOk() {
+                packetAry.splice(index, 1)
+                const curPacket = packetAry[0]
+                setCurSelectPacket(curPacket)
+                setPacketAry([...packetAry])
+                unEdit()
+                reloadCZML(packetAry)
+              }
+            });
+          }else{
+            message.error('can not delete packet 0 or 1')
+          }
+        }
+      }
+
+    }
+
 
   }
 
@@ -370,11 +475,12 @@ const EditorPage: React.FC = () => {
     const renderHTML = <>
       {expandPacket && <>
         {packetObj.map((item, index) => {
-          return <div key={index} className={styles.packet_item}>
+          const isActive = curSelectPacket && curSelectPacket === item
+          return <div key={index} className={styles.packet_item + ' ' + (isActive ? styles.active : '')}>
             <div className={styles.packet_item_title} onClick={() => {
               expandPacketItem(item)
             }}>
-              <span className={styles.packet_item_title_name}>Packet{index} id: {item.id}</span>
+              <span className={styles.packet_item_title_name}>Packet{index} id: {item.id.slice(0, 10)}</span>
               {/* <span className={styles.packet_item_title_type}> name: {item.name}</span> */}
               <div className={styles.packet_item_keys}>
                 {item.expand && Object.keys(item).map((key, index) => {
@@ -414,7 +520,7 @@ const EditorPage: React.FC = () => {
             <Button>addPacketNode</Button>
           </Dropdown>
           <Button onClick={() => {
-            console.log(' ');
+            deleteItem()
           }}>delete</Button>
           <Button>Import</Button>
           <Button onClick={exportJSON}>Export</Button>
@@ -444,6 +550,17 @@ const EditorPage: React.FC = () => {
         <div className={styles.cesium_container} id="cesiumContainer">
         </div>
         <div className={styles.form_container}>
+          {
+            !formData && curSelectPacket && <div className={styles.form_title}>
+              <h4>Packet Info</h4>
+              <p>
+                name: <span>{curSelectPacket.name || ''}</span>
+              </p>
+              <p>
+                id: <span>{curSelectPacket.id || ''}</span>
+              </p>
+            </div>
+          }
           {formData &&
             <Form
               formContext={{
