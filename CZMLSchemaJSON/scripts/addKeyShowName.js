@@ -5,6 +5,8 @@ const KeyShowNameMap = require('./keyShowName')
 
 const CZMLJSONSchemaPath = path.resolve(__dirname, '../Base')
 
+// Custom the show name of the key in the property
+
 const waitForHandleList = {
 	billboard: {
 		path: path.join(CZMLJSONSchemaPath, 'Billboard.json'),

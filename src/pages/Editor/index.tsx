@@ -1,5 +1,6 @@
 import Form from '@rjsf/antd';
-import { Button, Select } from 'antd';
+import { Button, Dropdown, Select, message } from 'antd';
+import type { MenuProps } from 'antd';
 import { RJSFSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ import CZMLModel from '../../../CZMLSchemaJSON/testFile/CesiumModel.json'
 
 import { uiSchema as CZMLUISchema } from '@/utils/CZMLUISchema';
 import { CZMLCustomWidgets } from '@/utils/CZMLWidgets';
+import { ALL_TEMPLATE } from '../../utils/CZMLTemplate';
 const widgets = CZMLCustomWidgets
 const uiSchema = CZMLUISchema
 
@@ -41,17 +43,8 @@ const czmlDemoKeymap = {
   path: CZMLPath,
 }
 
-const EMPTY_PACKET_ARY = [
-  {
-    id: 'document',
-    name: 'CZML Geometries: Polygon',
-    version: '1.0'
-  },
-  {
-    id: 'packet1',
-    name: 'packet title',
-  }
-]
+const ALL_DEFAULT_TEMPLATE = ALL_TEMPLATE
+type KeyOfTemplate = keyof typeof ALL_DEFAULT_TEMPLATE
 
 const EditorPage: React.FC = () => {
   const [formData, setFormData] = useState(null);
@@ -64,6 +57,79 @@ const EditorPage: React.FC = () => {
   const [curEditPacket, setCurPacket] = useState<any>(null)
   const [curDemoName, setCurDemoName] = useState('选择模板')
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState('')
+  const [curSelectPacket, setCurSelectPacket] = useState<any>(null)
+
+
+
+  const locatePacket = () => {
+    if (cesiumViewer) {
+      const dataSources = cesiumViewer.dataSources._dataSources[0]
+      console.log(' locate ');
+      if (dataSources) {
+        cesiumViewer.zoomTo(dataSources)
+      }
+    }
+  }
+
+  const addPacketNode = (nodeName: KeyOfTemplate) => {
+
+    // TODO: packetAry may be null 
+
+    console.log(' hall ');
+    if (curSelectPacket) {
+      if (curSelectPacket === packetAry[0]) {
+        const targetPacket = packetAry[1]
+        targetPacket[nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
+      } else {
+        if (curSelectPacket[nodeName]) {
+          message.error('该操作会覆盖该节点 可以 ctrl+z 撤销')
+        }
+        curSelectPacket[nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
+      }
+
+    } else {
+      if (packetAry) {
+        const targetPacket = packetAry[1]
+        if (targetPacket[nodeName]) {
+          message.error('该操作会覆盖该节点 可以 ctrl+z 撤销')
+        }
+        targetPacket[nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
+      } else {
+        // TODO: better never go this 
+        const newPacketAry = {...ALL_DEFAULT_TEMPLATE['EMPTY_PACKET_ARY']};
+        newPacketAry[1][nodeName] = ALL_DEFAULT_TEMPLATE[nodeName]
+        setPacketAry({...newPacketAry})
+      }
+    }
+
+    // update UI 
+    setPacketAry([...packetAry])
+    locatePacket()
+  }
+
+  const PacketNodeList: MenuProps['items'] = [
+    {
+      key: 'billboard',
+      label: (<a onClick={() => { addPacketNode('billboard') }}>图片</a>), // this is the show name in the form
+    },
+    {
+      key: 'label',
+      label: (<a onClick={() => { addPacketNode('label') }}>文字</a>), // this is the show name in the form
+    },
+    {
+      key: 'model',
+      label: (<a onClick={() => { addPacketNode('model') }}>gltf模型</a>), // this is the show name in the form
+    },
+    {
+      key: 'point',
+      label: (<a onClick={() => { addPacketNode('point') }}>点</a>), // this is the show name in the form
+    },
+    {
+      key: 'polyline',
+      label: (<a onClick={() => { addPacketNode('polyline') }}>线</a>), // this is the show name in the form
+    },
+  ]
+
 
   const setForm = (e) => {
     console.log(' curFormData ---- ', e.formData);
@@ -122,6 +188,47 @@ const EditorPage: React.FC = () => {
     setFormSchema(schema)
   }
 
+  const unloadCZML = () => {
+    if (cesiumViewer) {
+      cesiumViewer.dataSources.removeAll()
+    }
+    if (thumbnailViewer) {
+      thumbnailViewer.dataSources.removeAll()
+    }
+    const emptyPacketAry = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
+    setPacketAry(emptyPacketAry)
+    setFormData(null)
+  }
+
+  const loadCZML = async (czml: any, viewer = undefined, thumbViewer = undefined) => {
+    // @ts-ignore
+    // const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
+    console.log(' czml ', czml, viewer, thumbViewer);
+    unloadCZML()
+    let viewer1 = viewer || cesiumViewer
+    let viewer2 = thumbViewer || thumbnailViewer
+
+    if (viewer1) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      await viewer1.dataSources.add(dataSourcePromise);
+      const path = viewer1.dataSources._dataSources[0].entities.getById('path')
+      console.log(' path ', path);
+      viewer1.zoomTo(dataSourcePromise);
+
+      if (path) {
+        viewer1.trackedEntity = path
+      }
+    }
+    if (viewer2) {
+      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
+      await viewer2.dataSources.add(dataSourcePromise);
+      viewer2.zoomTo(dataSourcePromise);
+    }
+
+    // list need this 
+    setPacketAry(czml)
+  }
+
 
   useEffect(() => {
 
@@ -133,17 +240,15 @@ const EditorPage: React.FC = () => {
 
 
       const packetFromServer = await getPacketInfoFromServer()
+      let curPacketAry = packetFromServer
 
       if (packetFromServer === null) {
         // 初始化 一个空的 packet
-        const clonePakcet = JSON.parse(JSON.stringify(EMPTY_PACKET_ARY))
-        setPacketAry(clonePakcet)
+        const clonePakcet = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
+        curPacketAry = clonePakcet
 
-      } else {
-        // handle format data
-
-        setPacketAry(packetFromServer)
-      }
+      } 
+      setPacketAry(curPacketAry)
 
       const viewer = new Cesium.Viewer("cesiumContainer", {
         contextOptions: {
@@ -176,14 +281,15 @@ const EditorPage: React.FC = () => {
       });
       thumbView.scene.globe = undefined; // 移除地球球体
       thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
+      if(curPacketAry){
+        await loadCZML(curPacketAry, viewer, thumbView)
+      }
 
       console.log(' viewer ', viewer);
 
 
       setViewer(viewer);
       setThumbViewer(thumbView)
-
-
     }
 
     init()
@@ -201,42 +307,15 @@ const EditorPage: React.FC = () => {
     }
   }, [])
 
-  const unloadCZML = () => {
-    if (cesiumViewer) {
-      cesiumViewer.dataSources.removeAll()
+  const addPacket = () => {
+    if (packetAry) {
+      packetAry.push(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET)
+      setPacketAry([...packetAry])
+    } else {
+      const clonePakcet = JSON.parse(JSON.stringify(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET_ARY))
+      clonePakcet.push(ALL_DEFAULT_TEMPLATE.EMPTY_PACKET)
+      setPacketAry(clonePakcet)
     }
-    if (thumbnailViewer) {
-      thumbnailViewer.dataSources.removeAll()
-    }
-    setPacketAry(null)
-    setFormData(null)
-  }
-
-  const loadCZML = async (czml: any) => {
-    // @ts-ignore
-    // const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[curDemoName]));
-    console.log(' czml ', czml);
-    unloadCZML()
-
-    if (cesiumViewer) {
-      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-      await cesiumViewer.dataSources.add(dataSourcePromise);
-      const path = cesiumViewer.dataSources._dataSources[0].entities.getById('path')
-      console.log(' path ', path);
-      cesiumViewer.zoomTo(dataSourcePromise);
-
-      if (path) {
-        cesiumViewer.trackedEntity = path
-      }
-    }
-    if (thumbnailViewer) {
-      const dataSourcePromise = await Cesium.CzmlDataSource.load(czml);
-      await thumbnailViewer.dataSources.add(dataSourcePromise);
-      thumbnailViewer.zoomTo(dataSourcePromise);
-    }
-
-    // list need this 
-    setPacketAry(czml)
   }
 
   const loadTemplate = async (value: string) => {
@@ -252,28 +331,9 @@ const EditorPage: React.FC = () => {
     getThumbnail()
   }
 
-  const locatePacket = () => {
-    if (cesiumViewer) {
-      const dataSources = cesiumViewer.dataSources._dataSources[0]
-      if (dataSources) {
-        cesiumViewer.zoomTo(dataSources)
-      }
-    }
-  }
-
   const expandPacketItem = (item) => {
     console.log(' haha ');
     item.expand = !item.expand
-    setPacketAry([...packetAry])
-  }
-
-  const addPacket = () => {
-    const newPacket = {
-      id: 'document',
-      name: 'CZML Geometries: Polygon',
-      version: '1.0'
-    }
-    packetAry.push(newPacket)
     setPacketAry([...packetAry])
   }
 
@@ -288,6 +348,12 @@ const EditorPage: React.FC = () => {
       setFormData(item[key])
     })
   }
+
+  const exportJSON = () => {
+    console.log(' packetAry === ', JSON.stringify(packetAry, null, 2));
+
+  }
+
 
   const renderPacketSchema = (packet: any) => {
     const packetObj = packet
@@ -334,15 +400,14 @@ const EditorPage: React.FC = () => {
       <div className={styles.flex}>
         <div className={styles.tree_container}>
           <Button onClick={addPacket}>新增Packet</Button>
-          <Button onClick={addPacket}>InitPacket</Button>
-          <Button onClick={() => {
-            console.log(' ');
-          }}>新增PacketNode</Button>
+          <Dropdown menu={{ items: PacketNodeList }} trigger={['click']}>
+            <Button>新增节点</Button>
+          </Dropdown>
           <Button onClick={() => {
             console.log(' ');
           }}>删除</Button>
           <Button>导入</Button>
-          <Button>导出</Button>
+          <Button onClick={exportJSON}>导出</Button>
           <Button>保存</Button>
           <Select value={curDemoName} onChange={async (value) => {
             console.log(' value', value);
