@@ -65,7 +65,7 @@ const EditorPage: React.FC = () => {
 
   const [packetAry, setPacketAry] = useState<any>(null) // czml packet array
   const [curDemoName, setCurDemoName] = useState('ChooseTemplate') // czml template
-  const [expandPacket, setExpandPacket] = useState(false) // tree expand czml packet
+  const [expandPacket, setExpandPacket] = useState(true) // tree expand czml packet
   const [curSelectPacket, setCurSelectPacket] = useState<any>(null) // cur select packet in czml
   const [editKey, setEditKey] = useState(DEFAULT_KEY) // cur eidt key like "billboard" in curSelectPacket
 
