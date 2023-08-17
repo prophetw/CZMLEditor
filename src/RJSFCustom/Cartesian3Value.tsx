@@ -268,8 +268,8 @@ function Cartesian3Value(props) {
 							<div>
 								<Button onClick={() => {
 									deleteItem(index)
-								}}>删除</Button>
-								<Button onClick={addNewItem}>新增</Button>
+								}}>Delete</Button>
+								<Button onClick={addNewItem}>Add</Button>
 							</div>
 						</div>
 					)
@@ -301,7 +301,7 @@ function Cartesian3Value(props) {
 			<Button onClick={(e) => {
 				console.log(e);
 				toggleTime()
-			}}>开启时间输入 {enableTimeInput ? `true` : 'false'} </Button>
+			}}>enableTimeInput {enableTimeInput ? `true` : 'false'} </Button>
 			<Button onClick={(e) => {
 				toggleEpoch()
 			}}>useEpoch {isUseEpoch ? `true` : 'false'} </Button>
@@ -313,7 +313,7 @@ function Cartesian3Value(props) {
 				<TextArea value={textareaValue} />
 			</Modal>
 			{valueAry !== null && valueAry.length > 0 && ArrayItem(valueAry)}
-			{valueAry === null && <Button onClick={addNewItem}>新增</Button>}
+			{valueAry === null && <Button onClick={addNewItem}>Add</Button>}
 		</div>
 	);
 }

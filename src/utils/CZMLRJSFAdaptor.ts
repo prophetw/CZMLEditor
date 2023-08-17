@@ -10,10 +10,12 @@ import ModelJSONSchema from '../../CZMLSchemaJSON/Base/Model.json'
 import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
 import PositionJSONSchema from '../../CZMLSchemaJSON/Base/Position.json'
 import PathJSONSchema from '../../CZMLSchemaJSON/Base/Path.json'
+import BoxJSONSchema from '../../CZMLSchemaJSON/Base/Box.json'
 import CZMLDefinitions from './CZMLDefinitions';
 
 // original czml jsonSchema 
 const BaseJSONSchemaObj = {
+  box: BoxJSONSchema,
   billboard: BillboardJSONSchema,
   label: LabelJSONSchema,
   polygon: PolygonJSONSchema,
@@ -44,6 +46,7 @@ const editableKeysInPacketSchema = [
   "model",
   "position",
   "path",
+  "box",
 ]
 
 const czmlSchemaTypeKeymap = CZMLDefinitions;

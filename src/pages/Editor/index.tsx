@@ -26,6 +26,7 @@ import { CZMLCustomWidgets } from '@/utils/CZMLWidgets';
 import { ALL_TEMPLATE } from '../../utils/CZMLTemplate';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { generateGUID } from '@/utils/Utils';
+import TextArea from 'antd/es/input/TextArea';
 
 const widgets = CZMLCustomWidgets
 const uiSchema = CZMLUISchema
@@ -69,6 +70,8 @@ const EditorPage: React.FC = () => {
   const [curSelectPacket, setCurSelectPacket] = useState<any>(null) // cur select packet in czml
   const [editKey, setEditKey] = useState(DEFAULT_KEY) // cur eidt key like "billboard" in curSelectPacket
 
+  const [isImportModalOpen, setImportModelOpen] = useState(false)
+  const [importJSONStr, setImportJSONStr] = useState('')
 
 
   const locatePacket = () => {
@@ -77,6 +80,13 @@ const EditorPage: React.FC = () => {
       console.log(' locate ', cesiumViewer, dataSources);
       if (dataSources) {
         cesiumViewer.zoomTo(dataSources)
+      }
+    }
+    if (thumbnailViewer) {
+      const dataSources = thumbnailViewer.dataSources._dataSources[0]
+      console.log(' locate ', cesiumViewer, dataSources);
+      if (dataSources) {
+        thumbnailViewer.zoomTo(dataSources)
       }
     }
   }
@@ -116,11 +126,10 @@ const EditorPage: React.FC = () => {
   const addPacketNode = async (nodeName: KeyOfTemplate) => {
 
     // TODO: packetAry may be null 
-    if(dependOnPositionPropsAry.includes(nodeName)) {
+    if (dependOnPositionPropsAry.includes(nodeName)) {
       automaticAddPositionIfDependOnPosition(nodeName)
     }
-    
-    console.log(' hall ');
+
     if (curSelectPacket) {
       if (curSelectPacket === packetAry[0]) {
         const targetPacket = packetAry[1]
@@ -300,7 +309,7 @@ const EditorPage: React.FC = () => {
         }
       });
       const thumbView = new Cesium.Viewer("thumbnailContainer", {
-        baseLayerPicker: false, // 移除基础图层选择器
+        // baseLayerPicker: false, // 移除基础图层选择器
         baseLayer: false,
         geocoder: false, // 移除地理编码器
         homeButton: false, // 移除主页按钮
@@ -312,7 +321,7 @@ const EditorPage: React.FC = () => {
         vrButton: false, // 移除VR按钮
         skyAtmosphere: false, // 移除大气效果
         skyBox: false, // 移除天空盒
-        terrainProvider: new Cesium.EllipsoidTerrainProvider(), // 移除地形
+        // terrainProvider: new Cesium.EllipsoidTerrainProvider(), // 移除地形
         contextOptions: {
           webgl: {
             preserveDrawingBuffer: true,
@@ -320,7 +329,7 @@ const EditorPage: React.FC = () => {
           },
         }
       });
-      thumbView.scene.globe = undefined; // 移除地球球体
+      // thumbView.scene.globe = undefined; // 移除地球球体
       thumbView.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0);
       if (initedPacketAry) {
         loadCZML(initedPacketAry, viewer, thumbView)
@@ -387,6 +396,33 @@ const EditorPage: React.FC = () => {
     })
   }
 
+  const showImportModal = ()=>{
+    setImportModelOpen(true)
+  }
+
+  const handleImportOk = ()=>{
+    try {
+      const jsonObj = JSON.parse(importJSONStr)
+      if(jsonObj && Array.isArray(jsonObj)){
+        // 怎么校验是正确的 加载进  czml 
+        // TODO: 
+        // validateCZML()
+        console.log(jsonObj);
+        setPacketAry(jsonObj)
+        setFormData(null)
+        setEditKey('')
+        setCurSelectPacket(jsonObj[0])
+        loadCZML(jsonObj)
+        setImportModelOpen(false);
+      }else{
+        message.error('JSON not valid')
+      }
+    } catch (error) {
+      console.error(error);
+      message.error('JSON not valid')
+    }
+  }
+
   const unEdit = () => {
     setEditKey('')
     setFormData(null)
@@ -429,19 +465,19 @@ const EditorPage: React.FC = () => {
               unEdit()
             }
           });
-        }else{
+        } else {
           message.error('can not delete packet node position')
         }
       }
     }
 
     if (!editKey && curSelectPacket) {
-      if(curSelectPacket){
+      if (curSelectPacket) {
         console.log(' hello ');
         const index = packetAry.indexOf(curSelectPacket)
-        if(index>-1){
+        if (index > -1) {
           const isDeletable = (index !== 0 && index !== 1)
-          if(isDeletable){
+          if (isDeletable) {
             Modal.confirm({
               title: 'Are you sure delete this Packet?',
               icon: <ExclamationCircleFilled />,
@@ -458,7 +494,7 @@ const EditorPage: React.FC = () => {
                 reloadCZML(packetAry)
               }
             });
-          }else{
+          } else {
             message.error('can not delete packet 0 or 1')
           }
         }
@@ -522,9 +558,42 @@ const EditorPage: React.FC = () => {
           <Button onClick={() => {
             deleteItem()
           }}>delete</Button>
-          <Button>Import</Button>
+          <Button onClick={showImportModal}>
+            Import
+          </Button>
+          <Modal title="Import from JSON string" open={isImportModalOpen} onOk={handleImportOk} onCancel={()=>setImportModelOpen(false)}>
+            <TextArea 
+              value={importJSONStr}
+              placeholder={
+`JSON is like below. JSON.stringfy(jsonObject)
+[
+  {
+    "id": "document",
+    "name": "CZML Template",
+    "version": "1.0"
+  },
+  {
+    "id": "packet1",
+    "name": "Packet title",
+    "position": {
+      "cartographicDegrees": [ 121, 31, 22 ]
+    }
+  }
+]
+`
+              }
+
+              style={{ height: 300, marginBottom: 24 }}
+              onChange={(e)=>{
+                setImportJSONStr(e.target.value);
+              }}
+            />
+          </Modal>
           <Button onClick={exportJSON}>Export</Button>
           <Button>Save</Button>
+          <Button onClick={() => {
+            message.warning('need implement !')
+          }}>Save</Button>
           <Select value={curDemoName} onChange={async (value) => {
             console.log(' value', value);
             setCurDemoName(value)

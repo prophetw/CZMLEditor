@@ -28,7 +28,7 @@ const labelTemplate = {
 const polylineTemplate = {
 	"positions": {
 		cartographicDegrees: [
-			121.59777,
+			121,
 			31.03883,
 			0,
 			121.59776,
