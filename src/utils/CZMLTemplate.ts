@@ -56,7 +56,7 @@ const pointTemplate = {
 }
 
 const modelTemplate = {
-	"gltf": "/car1.glb",
+	"gltf": "./car1.glb",
 	"minimumPixelSize": 128,
 	"maximumScale": 20000,
 }
