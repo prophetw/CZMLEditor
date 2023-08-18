@@ -65,6 +65,12 @@ const czmlSchemaTypeKeymap = {
     }
     // format: 'Cartesian3_value',
   },
+  'CornerType.json': {
+    type: 'string',
+    enum: ['ROUNDED', 'MITERED', 'BEVELED'],
+    // enumNames: ['圆角', '斜角', '斜角'],
+    default: 'ROUNDED',
+  },
   'BoxDimensions.json': {
     type: 'object',
     properties: {
@@ -117,7 +123,7 @@ const czmlSchemaTypeKeymap = {
   },
   'PositionList.json': {
     type: "object",
-    title: ' Longitude, Latitude, Height in radians',
+    title: 'Positions',
     properties: {
       cartographicRadians: {
         type: 'array',
@@ -264,6 +270,22 @@ const czmlSchemaTypeKeymap = {
           ],
           additionalItems: false
         },
+      },
+      {
+        type: "object",
+        title: ' references {PacketId}#{propertiName} like target1#position',
+        properties: {
+          references: {
+            type: 'array',
+            items: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'refrence',
+            }
+          }
+        }
       }
     ],
   },
@@ -693,6 +715,54 @@ const czmlSchemaTypeKeymap = {
     type: 'string',
     enum: ['DISABLED', 'ENABLED', 'CAST_ONLY', 'RECEIVE_ONLY'],
     enumNames: ['全关闭', '全开启', '仅投射阴影', '仅接受阴影']
+  },
+  'Shape.json': {
+    type: 'object',
+    properties: {
+      cartesian2: {
+        type: 'array',
+        items: {
+          "type": "number",
+          description: " offsetY ",
+          default: 5
+        }
+      },
+    }
+
+  },
+  'EllipsoidRadii.json': {
+    oneOf: [
+      {
+          type: 'null',
+          title: 'undefined'
+      },
+      {
+        type: 'object',
+        properties: {
+          "cartesian": {
+            type: 'array',
+            items: [
+              {
+                type: "number",
+                description: " X axis",
+                default: 0.0
+              },
+              {
+                "type": "number",
+                description: " Y axis",
+                default: 1.0
+              },
+              {
+                "type": "number",
+                description: " Z axis",
+                default: 0.0
+              }
+            ],
+            additionalItems: false,
+          }
+        },
+      }
+    ],
   },
   'ClassificationType.json': {
     type: 'string',

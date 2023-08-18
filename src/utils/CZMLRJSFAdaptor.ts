@@ -11,10 +11,24 @@ import PacketJSONSchema from '../../CZMLSchemaJSON/Base/Packet.json'
 import PositionJSONSchema from '../../CZMLSchemaJSON/Base/Position.json'
 import PathJSONSchema from '../../CZMLSchemaJSON/Base/Path.json'
 import BoxJSONSchema from '../../CZMLSchemaJSON/Base/Box.json'
+import ShapeJSONSchema from '../../CZMLSchemaJSON/Base/Shape.json'
+import EllipseJSONSchema from '../../CZMLSchemaJSON/Base/Ellipse.json'
+import CylinderJSONSchema from '../../CZMLSchemaJSON/Base/Cylinder.json'
+import CorridorJSONSchema from '../../CZMLSchemaJSON/Base/Corridor.json'
+import PolylineVolumeJSONSchema from '../../CZMLSchemaJSON/Base/PolylineVolume.json'
+import EllipsoidJSONSchema  from '../../CZMLSchemaJSON/Base/Ellipsoid.json'
+
+
 import CZMLDefinitions from './CZMLDefinitions';
 
 // original czml jsonSchema 
 const BaseJSONSchemaObj = {
+  ellipsoid: EllipsoidJSONSchema,
+  polylineVolume: PolylineVolumeJSONSchema,
+  corridor: CorridorJSONSchema,
+  cylinder: CylinderJSONSchema,
+  ellipse: EllipseJSONSchema,
+  shape: ShapeJSONSchema,
   box: BoxJSONSchema,
   billboard: BillboardJSONSchema,
   label: LabelJSONSchema,
@@ -27,6 +41,7 @@ const BaseJSONSchemaObj = {
   rectangle: RectangleJSONSchema,
   position: PositionJSONSchema,
   path: PathJSONSchema,
+
 }
 
 const validPacketKeys = Object.keys(BaseJSONSchemaObj.packet.properties)
@@ -36,6 +51,12 @@ const validPolygonKeys = Object.keys(BaseJSONSchemaObj.polygon.properties)
 const validPolylineKeys = Object.keys(BaseJSONSchemaObj.polyline.properties)
 
 const editableKeysInPacketSchema = [
+  "ellipsoid",
+  "polylineVolume",
+  "corridor",
+  "cylinder",
+  "ellipse",
+  "shape",
   "billboard",
   "label",
   "polygon",
