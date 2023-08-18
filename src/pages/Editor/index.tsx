@@ -74,12 +74,23 @@ const EditorPage: React.FC = () => {
   const [importJSONStr, setImportJSONStr] = useState('')
 
 
-  const locatePacket = () => {
+  const locatePacket = (isLocateToCurPacket = false) => {
     if (cesiumViewer) {
       const dataSources = cesiumViewer.dataSources._dataSources[0]
-      console.log(' locate ', cesiumViewer, dataSources);
-      if (dataSources) {
-        cesiumViewer.zoomTo(dataSources)
+      if (isLocateToCurPacket && curSelectPacket && dataSources) {
+        const entities = dataSources.entities
+        if (entities) {
+          const packetId = curSelectPacket.id;
+          const entity = entities.getById(packetId)
+          if (entity) {
+            cesiumViewer.flyTo(entity)
+          }
+        }
+      } else {
+        console.log(' locate ', cesiumViewer, dataSources);
+        if (dataSources) {
+          cesiumViewer.zoomTo(dataSources)
+        }
       }
     }
     if (thumbnailViewer) {
@@ -375,6 +386,7 @@ const EditorPage: React.FC = () => {
     // @ts-ignore
     const czml = JSON.parse(JSON.stringify(czmlDemoKeymap[value]));
     loadCZML(czml)
+    setCurSelectPacket(czml[0])
   }
 
 
@@ -393,17 +405,18 @@ const EditorPage: React.FC = () => {
       console.log(' item key ', item, key);
       console.log(' curForm ', item[key]);
       setFormData(item[key])
+      locatePacket(true)
     })
   }
 
-  const showImportModal = ()=>{
+  const showImportModal = () => {
     setImportModelOpen(true)
   }
 
-  const handleImportOk = ()=>{
+  const handleImportOk = () => {
     try {
       const jsonObj = JSON.parse(importJSONStr)
-      if(jsonObj && Array.isArray(jsonObj)){
+      if (jsonObj && Array.isArray(jsonObj)) {
         // 怎么校验是正确的 加载进  czml 
         // TODO: 
         // validateCZML()
@@ -414,7 +427,7 @@ const EditorPage: React.FC = () => {
         setCurSelectPacket(jsonObj[0])
         loadCZML(jsonObj)
         setImportModelOpen(false);
-      }else{
+      } else {
         message.error('JSON not valid')
       }
     } catch (error) {
@@ -561,11 +574,11 @@ const EditorPage: React.FC = () => {
           <Button onClick={showImportModal}>
             Import
           </Button>
-          <Modal title="Import from JSON string" open={isImportModalOpen} onOk={handleImportOk} onCancel={()=>setImportModelOpen(false)}>
-            <TextArea 
+          <Modal title="Import from JSON string" open={isImportModalOpen} onOk={handleImportOk} onCancel={() => setImportModelOpen(false)}>
+            <TextArea
               value={importJSONStr}
               placeholder={
-`JSON is like below. JSON.stringfy(jsonObject)
+                `JSON is like below. JSON.stringfy(jsonObject)
 [
   {
     "id": "document",
@@ -584,13 +597,12 @@ const EditorPage: React.FC = () => {
               }
 
               style={{ height: 300, marginBottom: 24 }}
-              onChange={(e)=>{
+              onChange={(e) => {
                 setImportJSONStr(e.target.value);
               }}
             />
           </Modal>
           <Button onClick={exportJSON}>Export</Button>
-          <Button>Save</Button>
           <Button onClick={() => {
             message.warning('need implement !')
           }}>Save</Button>

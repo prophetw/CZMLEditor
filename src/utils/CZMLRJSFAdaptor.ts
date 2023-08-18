@@ -50,25 +50,7 @@ const validLabelKeys = Object.keys(BaseJSONSchemaObj.label.properties)
 const validPolygonKeys = Object.keys(BaseJSONSchemaObj.polygon.properties)
 const validPolylineKeys = Object.keys(BaseJSONSchemaObj.polyline.properties)
 
-const editableKeysInPacketSchema = [
-  "ellipsoid",
-  "polylineVolume",
-  "corridor",
-  "cylinder",
-  "ellipse",
-  "shape",
-  "billboard",
-  "label",
-  "polygon",
-  "polyline",
-  "point",
-  "rectangle",
-  "clock",
-  "model",
-  "position",
-  "path",
-  "box",
-]
+const editableKeysInPacketSchema = Object.keys(BaseJSONSchemaObj)
 
 const czmlSchemaTypeKeymap = CZMLDefinitions;
 
