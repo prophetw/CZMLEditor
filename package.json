@@ -16,6 +16,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@ant-design/pro-components": "^2.4.4",
+    "@google-cloud/translate": "^8.0.1",
     "@rjsf/antd": "^5.11.2",
     "@rjsf/core": "^5.11.2",
     "@rjsf/utils": "^5.11.2",

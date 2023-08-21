@@ -633,7 +633,7 @@ const EditorPage: React.FC = () => {
         <div className={styles.form_container}>
           {
             !formData && curSelectPacket && <div className={styles.form_title}>
-              <h4>Packet Info</h4>
+              <h3>Packet Detail</h3>
               <p>
                 name: <span>{curSelectPacket.name || ''}</span>
               </p>
@@ -668,7 +668,7 @@ const EditorPage: React.FC = () => {
             getThumbnail()
           }}>getThumbnail</Button>
           {thumbnailDataUrl && <img style={{ border: "1px solid #666" }} src={thumbnailDataUrl} alt="" />}
-          <Button onClick={locatePacket}>Locate</Button>
+          <Button onClick={(e)=>locatePacket()}>Locate</Button>
         </div>
       </div>
 
