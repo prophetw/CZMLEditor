@@ -101,6 +101,13 @@ const czmlSchemaTypeKeymap = {
     }
   },
   'BackgroundPadding.json': {
+    oneOf: [
+      {
+        type: 'null',
+        title: 'undefined'
+      },
+      {
+
     type: 'object',
     properties: {
       cartesian2: {
@@ -120,6 +127,8 @@ const czmlSchemaTypeKeymap = {
         additionalItems: false,
       },
     }
+      }
+    ]
   },
   'PositionList.json': {
     type: "object",
@@ -733,8 +742,8 @@ const czmlSchemaTypeKeymap = {
   'EllipsoidRadii.json': {
     oneOf: [
       {
-          type: 'null',
-          title: 'undefined'
+        type: 'null',
+        title: 'undefined'
       },
       {
         type: 'object',
