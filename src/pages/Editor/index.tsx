@@ -319,6 +319,22 @@ const EditorPage: React.FC = () => {
           },
         }
       });
+
+      const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+      handler.setInputAction(function(movement: {
+        position: Cesium.Cartesian2
+      }) {
+          const cartesian = viewer.scene.pickPosition(movement.position);
+          console.log(' ----- cartesian coord ----- ', cartesian);
+          if (Cesium.defined(cartesian)) {
+              const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+              console.log(' --- cartographicRadians coord --- ', cartographic);
+              const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+              const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+              console.log(' --- longitude latitude :', longitude, latitude);
+          }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
       const thumbView = new Cesium.Viewer("thumbnailContainer", {
         // baseLayerPicker: false, // 移除基础图层选择器
         baseLayer: false,
